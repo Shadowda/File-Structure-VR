@@ -14,11 +14,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Users\\Pierce T Jackson\\Documents\\Data Vis\\VR\\Reader\\Reader.csproj",
+      "projectUniqueName": "D:\\Users\\Pierce T Jackson\\Documents\\Data Vis\\VR\\File-Structure-VR\\Reader\\Reader.csproj",
       "projectName": "Reader",
-      "projectPath": "D:\\Users\\Pierce T Jackson\\Documents\\Data Vis\\VR\\Reader\\Reader.csproj",
+      "projectPath": "D:\\Users\\Pierce T Jackson\\Documents\\Data Vis\\VR\\File-Structure-VR\\Reader\\Reader.csproj",
       "packagesPath": "C:\\Users\\Pierce T Jackson\\.nuget\\packages\\",
-      "outputPath": "D:\\Users\\Pierce T Jackson\\Documents\\Data Vis\\VR\\Reader\\obj\\",
+      "outputPath": "D:\\Users\\Pierce T Jackson\\Documents\\Data Vis\\VR\\File-Structure-VR\\Reader\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
