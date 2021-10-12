@@ -6,7 +6,7 @@ using UnityEngine;
 public class UnityDirectory : UnityFileSystemEntry
 {
 
-    public static int PROCESS_DEPTH_MAX = 1;
+    public static int PROCESS_DEPTH_MAX = 2;
 
     public UnityDirectory Parent { get; set; }
 
@@ -34,6 +34,8 @@ public class UnityDirectory : UnityFileSystemEntry
         LastModified = Info.LastWriteTime;
         Position = new Vector3(0f, 0f, 0f);
         Children = new List<UnityFileSystemEntry>();
+        GraphedChildren = new List<UnityDirectory>();
+
         // Populate directory children if we aren't at max depth
         if (depth < PROCESS_DEPTH_MAX)
         {
@@ -43,7 +45,7 @@ public class UnityDirectory : UnityFileSystemEntry
 
     private void ProcessChildren(int depth)
     {
-        if (depth > 1) { return; }
+        if (depth > PROCESS_DEPTH_MAX) { return; }
 
         string[] directories, files;
 
@@ -72,13 +74,13 @@ public class UnityDirectory : UnityFileSystemEntry
         }
 
         Size = Children.Count;
-
+        
         for (int i = 0; i < Size; i++)
         {
             var child = Children[i] as UnityDirectory;
             if (child != null)
             {
-                this.GraphedChildren.Add(Children[i]);
+                this.GraphedChildren.Add(child);
             }
         }
     }
@@ -151,7 +153,6 @@ public class UnityDirectory : UnityFileSystemEntry
 
     public void LogPrint(UnityDirectory node)
     {
-        Debug.Log(node.Name);
         foreach (var child in node.Children)
         {
             var child2 = child as UnityDirectory;
@@ -160,6 +161,10 @@ public class UnityDirectory : UnityFileSystemEntry
                 LogPrint(child2);
             }
         }
+        Debug.Log(node.Path);
+        Debug.Log(node.X);
+        Debug.Log(node.Y);
+        Debug.Log(' ');
     }
 
 }

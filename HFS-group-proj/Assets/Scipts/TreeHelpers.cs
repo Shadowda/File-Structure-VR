@@ -62,7 +62,7 @@ namespace DrawTreeTest
 
         private static void CalculateInitialX(UnityDirectory node)
         {
-            foreach (UnityDirectory child in node.Children)
+            foreach (UnityDirectory child in node.GraphedChildren)
                 if (child.EntryType == UnityDirectory.Type.Directory)
                 {
                     CalculateInitialX(child);
