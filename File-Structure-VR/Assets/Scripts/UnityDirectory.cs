@@ -25,8 +25,6 @@ public class UnityDirectory : UnityFileSystemEntry {
     }
 
     private void ProcessChildren(int depth) {
-        if (depth > 1) { return; }
-
         string[] directories, files;
 
         // Attempt to read in the files and directories at a path

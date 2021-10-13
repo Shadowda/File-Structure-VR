@@ -3,7 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Reader : MonoBehaviour {
+public class RoomReader : MonoBehaviour {
+
+    private Mesh meshFilter;
+    private Vector3[] vertices;
+    private GameObject[] spheres;
 
     // Start is called before the first frame update
     void Start() {
@@ -11,13 +15,15 @@ public class Reader : MonoBehaviour {
         string[] drives = Environment.GetLogicalDrives();
         UnityDirectory root = new UnityDirectory(drives[0], 0);
 
-        foreach(UnityFileSystemEntry fsEntry in root.Children) {
-            Debug.Log(fsEntry.EntryType);
+        // Iterate through root's children, 
+        for (int i = 0; i < root.Children.Count; i++) {
+
         }
     }
 
     // Update is called once per frame
     void Update() {
-        
+
     }
 }
+
