@@ -6,7 +6,7 @@ using UnityEngine;
 public class UnityDirectory : UnityFileSystemEntry
 {
 
-    public static int PROCESS_DEPTH_MAX = 2;
+    public static int PROCESS_DEPTH_MAX = 3;
 
     public UnityDirectory Parent { get; set; }
 
@@ -64,7 +64,9 @@ public class UnityDirectory : UnityFileSystemEntry
         // Add directories to current directory's children
         foreach (string directory in directories)
         {
-            Children.Add(new UnityDirectory(directory, depth, this));
+            if (directory != "D:/Users/Pierce T Jackson/Documents") { 
+                Children.Add(new UnityDirectory(directory, depth, this));
+            }
         }
 
         // Add files to current directory's children
@@ -167,4 +169,9 @@ public class UnityDirectory : UnityFileSystemEntry
         Debug.Log(' ');
     }
 
+    public void Log<t>(t str)
+    {
+        Debug.Log(str);
+
+    }
 }

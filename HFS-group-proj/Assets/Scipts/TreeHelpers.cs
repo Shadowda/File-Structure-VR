@@ -8,8 +8,8 @@ namespace DrawTreeTest
 {
     public static class TreeHelpers
     {
-        private static int nodeSize = 1;
-        private static float siblingDistance = 0.0F;
+        private static int nodeSize = 4;
+        private static float siblingDistance = 1F;
         private static float treeDistance = 0.0F;
  
         public static void CalculateNodePositions(UnityDirectory rootNode)
@@ -21,7 +21,7 @@ namespace DrawTreeTest
             CalculateInitialX(rootNode);
 
             // ensure no node is being drawn off screen
-            CheckAllChildrenOnScreen(rootNode);
+           // CheckAllChildrenOnScreen(rootNode);
 
             // assign final X values to nodes
             CalculateFinalPositions(rootNode, 0);
@@ -48,11 +48,14 @@ namespace DrawTreeTest
                 {
                     CalculateFinalPositions(child, modSum);
                 }
+
+            //childless = leaf
             if (node.GraphedChildren.Count == 0)
             {
                 node.Width = node.X;
                 node.Height = node.Y;
             }
+            //has chidlren
             else
             {
                 node.Width = node.GraphedChildren.OrderByDescending(p => p.Width).First().Width;
@@ -92,6 +95,7 @@ namespace DrawTreeTest
                     node.Mod = node.X - node.GraphedChildren[0].X;
                 } 
             }
+            // many children.
             else
             {
                 var leftChild = node.GetLeftMostChild();
@@ -108,7 +112,13 @@ namespace DrawTreeTest
                     node.Mod = node.X - mid;
                 }
             }
-            
+            node.Log<float>(node.Mod);
+            /*
+            if (node.Mod > 1000)
+            {
+                node.Mod = 1000;
+            }
+            */
             if (node.GraphedChildren.Count > 0 && !node.IsLeftMost())
             {
                 // Since subtrees can overlap, check for conflicts and shift tree right if needed
