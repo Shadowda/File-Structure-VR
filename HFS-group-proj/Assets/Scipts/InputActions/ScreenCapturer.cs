@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PrimaryReactor : MonoBehaviour
+public class ScreenCapturer : MonoBehaviour
 {
     public PrimaryButtonWatcher watcher;
 
