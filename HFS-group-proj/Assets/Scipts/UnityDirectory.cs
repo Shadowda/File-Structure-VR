@@ -37,7 +37,7 @@ public class UnityDirectory : UnityFileSystemEntry
         GraphedChildren = new List<UnityDirectory>();
 
         // Populate directory children if we aren't at max depth
-        if (depth < PROCESS_DEPTH_MAX)
+        if (depth < PROCESS_DEPTH_MAX) 
         {
             ProcessChildren(depth + 1);
         }
@@ -45,8 +45,6 @@ public class UnityDirectory : UnityFileSystemEntry
 
     private void ProcessChildren(int depth)
     {
-        if (depth > PROCESS_DEPTH_MAX) { return; }
-
         string[] directories, files;
 
         // Attempt to read in the files and directories at a path
@@ -64,9 +62,7 @@ public class UnityDirectory : UnityFileSystemEntry
         // Add directories to current directory's children
         foreach (string directory in directories)
         {
-            if (directory != "D:/Users/Pierce T Jackson/Documents") { 
-                Children.Add(new UnityDirectory(directory, depth, this));
-            }
+            Children.Add(new UnityDirectory(directory, depth, this));
         }
 
         // Add files to current directory's children
@@ -163,15 +159,16 @@ public class UnityDirectory : UnityFileSystemEntry
                 LogPrint(child2);
             }
         }
-        Debug.Log(node.Path);
-        Debug.Log(node.X);
-        Debug.Log(node.Y);
-        Debug.Log(' ');
+
+        Debug.Log(
+            "Path: " + node.Path + 
+            ", X: " + node.X + 
+            ", Y: " + node.Y
+        );
     }
 
     public void Log<t>(t str)
     {
         Debug.Log(str);
-
     }
 }
