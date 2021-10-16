@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using NLT;
 
 public class Reader : MonoBehaviour
 {
@@ -16,17 +17,13 @@ public class Reader : MonoBehaviour
         
         //UnityDirectory root = new UnityDirectory(drives[0], 0);
 
-        RootMaster master = new RootMaster();
-        master.Name = "test";
-
         UnityDirectory root = new UnityDirectory("D:/Users/", 0);
-        root.Master = master;
-        root.updateMaster(root);
 
-        //root.LogPrint(root);
+        NLT_Tree.Tree treeRoot = root.convert(root);
 
-        DrawTreeTest.TreeHelpers.CalculateNodePositions(root);
-        Place(root);
+        treeRoot.layout(treeRoot);
+
+        Place(treeRoot, null);
     }
 
     // Update is called once per frame
@@ -35,7 +32,31 @@ public class Reader : MonoBehaviour
 
     }
 
+    public void Place(NLT_Tree.Tree node, NLT_Tree.Tree Parent)
+    {
+        Vector3 spawnPosition = new Vector3(node.x * 2, 0, node.y * 20);
+        GameObject ob = Instantiate(EntryType[2], spawnPosition + transform.TransformPoint(0, 0, 0), gameObject.transform.rotation);
 
+        if(Parent != null)
+        {
+            LineRenderer lineRenderer = ob.AddComponent<LineRenderer>();
+            lineRenderer.material = new Material(Shader.Find("Sprites/Default"));
+            lineRenderer.widthMultiplier = 0.2f;
+            lineRenderer.positionCount = 2;
+
+            Vector3 spawnPosition2 = new Vector3(Parent.x * 2, 0, Parent.y * 20);
+
+            lineRenderer.SetPosition(0, spawnPosition);
+            lineRenderer.SetPosition(1, spawnPosition2);
+        }
+
+        foreach (var child in node.c)
+        {
+            Place(child, node);
+        }
+    }
+
+    /*
     public void Place(UnityDirectory node)
     {
         Vector3 spawnPosition = new Vector3(node.X, 0 , node.Y * 15);
@@ -59,21 +80,7 @@ public class Reader : MonoBehaviour
 
         //var ob = Instantiate(EntryType[(int)node.EntryType], spawnPosition + transform.TransformPoint(0, 0, 0), gameObject.transform.rotation);
 
-        
-        if (node.Parent != null) { 
-            LineRenderer lineRenderer = node.ob.AddComponent<LineRenderer>();
-            //lineRenderer.useWorldSpace = false;
-            lineRenderer.material = new Material(Shader.Find("Sprites/Default"));
-            lineRenderer.widthMultiplier = 0.2f;
-            //lineRenderer.SetWidth(0, node.Size/10);
-            lineRenderer.positionCount = 2;
 
-            Vector3 spawnPosition2 = new Vector3(node.Parent.X, 0, node.Parent.Y * 15);
-            //Vector3 spawnPosition2 = new Vector3(node.Parent.X, -node.Parent.Y * 15, node.Parent.Z);
-        
-            lineRenderer.SetPosition(0, spawnPosition);
-            lineRenderer.SetPosition(1, spawnPosition2);
-        }
         
 
         foreach (var child in node.Children)
@@ -85,4 +92,5 @@ public class Reader : MonoBehaviour
             }
         }
     }
+    */
 }

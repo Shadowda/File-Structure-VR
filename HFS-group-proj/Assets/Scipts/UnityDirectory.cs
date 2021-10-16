@@ -6,7 +6,7 @@ using UnityEngine;
 public class UnityDirectory : UnityFileSystemEntry
 {
 
-    public static int PROCESS_DEPTH_MAX = 4;
+    public static int PROCESS_DEPTH_MAX = 6;
 
     public UnityDirectory Parent { get; set; }
 
@@ -15,13 +15,13 @@ public class UnityDirectory : UnityFileSystemEntry
 
     public int Size { get; set; }
 
-    // position in space
-    public float Mod { get; set; }
-    public float X { get; set; }
-    public int Y { get; set; }
-    public float Z { get; set; } 
-
     public GameObject ob { get; set; }
+
+    public float width { get; set; }
+    public float height { get; set; }
+
+    public float x { get; set; }
+    public float y { get; set; }
 
     public List<UnityDirectory> GraphedChildren { get; set; }
 
@@ -42,6 +42,11 @@ public class UnityDirectory : UnityFileSystemEntry
         {
             ProcessChildren(depth + 1);
         }
+
+        width = 2;
+        height = 2;
+        y = (float) depth;
+
     }
 
     private void ProcessChildren(int depth)
@@ -88,81 +93,10 @@ public class UnityDirectory : UnityFileSystemEntry
         }
     }
 
-    #region Node Magic
 
-    public UnityDirectory GetPreviousCousin()
-    {
-        if (this.Parent == null || this.IsLeftMost())
-            return null;
 
-        return this.Parent.GraphedChildren[this.Parent.GraphedChildren.IndexOf(this) - 1];
-    }
 
-    public bool IsLeaf()
-    {
-        return this.GraphedChildren.Count == 0;
-    }
 
-    public bool IsLeftMost()
-    {
-        if (this.Parent == null)
-            return true;
-
-        return this.Parent.GraphedChildren[0] == this;
-    }
-
-    public bool IsRightMost()
-    {
-        if (this.Parent == null)
-            return true;
-
-        return this.Parent.GraphedChildren[this.Parent.GraphedChildren.Count - 1] == this;
-    }
-
-    public UnityDirectory GetPreviousSibling()
-    {
-        if (this.Parent == null || this.IsLeftMost())
-            return null;
-
-        return this.Parent.GraphedChildren[this.Parent.GraphedChildren.IndexOf(this) - 1];
-    }
-
-    public UnityDirectory GetNextSibling()
-    {
-        if (this.Parent == null || this.IsRightMost())
-            return null;
-
-        return this.Parent.GraphedChildren[this.Parent.GraphedChildren.IndexOf(this) + 1];
-    }
-
-    public UnityDirectory GetLeftMostSibling()
-    {
-        if (this.Parent == null)
-            return null;
-
-        if (this.IsLeftMost())
-            return this;
-
-        return this.Parent.GraphedChildren[0];
-    }
-
-    public UnityDirectory GetLeftMostChild()
-    {
-        if (this.GraphedChildren.Count == 0)
-            return null;
-
-        return this.GraphedChildren[0];
-    }
-
-    public UnityDirectory GetRightMostChild()
-    {
-        if (this.GraphedChildren.Count == 0)
-            return null;
-
-        return this.GraphedChildren[GraphedChildren.Count - 1];
-    }
-
-    #endregion 
 
     public void LogPrint(UnityDirectory node)
     {
@@ -196,5 +130,20 @@ public class UnityDirectory : UnityFileSystemEntry
             updateMaster(child);
         }
     }
+
+    public NLT.NLT_Tree.Tree convert(UnityDirectory root)
+    {
+        if (root == null) return null;
+
+        List<NLT.NLT_Tree.Tree> children = new List<NLT.NLT_Tree.Tree>();
+
+        foreach (var child in root.GraphedChildren)
+        {
+            children.Add(convert(child));
+        }
+
+        return new NLT.NLT_Tree.Tree(root.width, root.height, root.y, children);
+    }
+
 
 }
