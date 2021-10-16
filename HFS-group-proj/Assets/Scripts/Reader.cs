@@ -1,29 +1,30 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+
 using UnityEngine;
+using UnityEngine.XR.Interaction.Toolkit;
+
 using NLT;
 
 public class Reader : MonoBehaviour
 {
+    public string RootPath;
+    public XRRig Rig;
     public GameObject[] EntryType;
 
     // Start is called before the first frame update
     void Start()
     {
-
         // Obtain names of all logical drives on the computer, set root to first drive.
         string[] drives = Environment.GetLogicalDrives();
-        
-        //UnityDirectory root = new UnityDirectory(drives[0], 0);
-
-        UnityDirectory root = new UnityDirectory("D:/Users/", 0);
+        UnityDirectory root = new UnityDirectory(RootPath != "" ? RootPath : drives[0], 0);
 
         NLT_Tree.Tree treeRoot = root.convert(root);
-
         treeRoot.layout(treeRoot);
-
         Place(treeRoot, null);
+
+        Rig.MoveCameraToWorldLocation(new Vector3(treeRoot.x * 2, 0, treeRoot.y * 20));
     }
 
     // Update is called once per frame
@@ -45,7 +46,6 @@ public class Reader : MonoBehaviour
             lineRenderer.positionCount = 2;
 
             Vector3 spawnPosition2 = new Vector3(Parent.x * 2, 0, Parent.y * 20);
-
             lineRenderer.SetPosition(0, spawnPosition);
             lineRenderer.SetPosition(1, spawnPosition2);
         }

@@ -6,7 +6,7 @@ using UnityEngine;
 public class UnityDirectory : UnityFileSystemEntry
 {
 
-    public static int PROCESS_DEPTH_MAX = 6;
+    public static int PROCESS_DEPTH_MAX = 2;
 
     public UnityDirectory Parent { get; set; }
 
@@ -93,11 +93,6 @@ public class UnityDirectory : UnityFileSystemEntry
         }
     }
 
-
-
-
-
-
     public void LogPrint(UnityDirectory node)
     {
         foreach (var child in node.Children)
@@ -144,6 +139,4 @@ public class UnityDirectory : UnityFileSystemEntry
 
         return new NLT.NLT_Tree.Tree(root.width, root.height, root.y, children);
     }
-
-
 }
