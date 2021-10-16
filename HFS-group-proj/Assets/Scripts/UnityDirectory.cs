@@ -1,3 +1,4 @@
+@@ -0,0 + 1,160 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -6,11 +7,7 @@ using UnityEngine;
 public class UnityDirectory : UnityFileSystemEntry
 {
 
-<<<<<<< HEAD
     public static int PROCESS_DEPTH_MAX = 3;
-=======
-    public static int PROCESS_DEPTH_MAX = 2;
->>>>>>> 20f08ed6622c0f3f1e7d0635d4eb973b2771e4e3
 
     public UnityDirectory Parent { get; set; }
 
@@ -47,24 +44,17 @@ public class UnityDirectory : UnityFileSystemEntry
             ProcessChildren(depth + 1);
         }
 
-<<<<<<< HEAD
         width = this.Size;
         height = 5;
         y = depth;
-        if(Parent == null)
+        if (Parent == null)
         {
             foreach (var child in this.GraphedChildren)
             {
                 updateY(child);
             }
         }
-        
-=======
-        width = 2;
-        height = 2;
-        y = (float) depth;
 
->>>>>>> 20f08ed6622c0f3f1e7d0635d4eb973b2771e4e3
     }
 
     private void ProcessChildren(int depth)
@@ -88,7 +78,8 @@ public class UnityDirectory : UnityFileSystemEntry
         // Add directories to current directory's children
         foreach (string directory in directories)
         {
-            if (directory != "D:/Users/Pierce T Jackson/Documents") { 
+            if (directory != "D:/Users/Pierce T Jackson/Documents")
+            {
                 Children.Add(new UnityDirectory(directory, depth, this));
             }
         }
@@ -100,7 +91,7 @@ public class UnityDirectory : UnityFileSystemEntry
         }
 
         Size = Children.Count;
-        
+
         for (int i = 0; i < Size; i++)
         {
             var child = Children[i] as UnityDirectory;
@@ -121,17 +112,10 @@ public class UnityDirectory : UnityFileSystemEntry
                 LogPrint(child2);
             }
         }
-        
+
         Debug.Log(node.Path);
-<<<<<<< HEAD
         Debug.Log(node.width);
         Debug.Log(node.height);
-=======
-        Debug.Log(node.Master.Name);
-      
-       // Debug.Log(node.X);
-        //Debug.Log(node.Y);
->>>>>>> 20f08ed6622c0f3f1e7d0635d4eb973b2771e4e3
         //Debug.Log(' ');
     }
 
@@ -160,7 +144,6 @@ public class UnityDirectory : UnityFileSystemEntry
             children.Add(convert(child));
         }
 
-<<<<<<< HEAD
         return new NLT.NLT_Tree.Tree(root.width, root.height, root.y, children, root.Path);
     }
 
@@ -175,8 +158,5 @@ public class UnityDirectory : UnityFileSystemEntry
             updateY(child);
         }
 
-=======
-        return new NLT.NLT_Tree.Tree(root.width, root.height, root.y, children);
->>>>>>> 20f08ed6622c0f3f1e7d0635d4eb973b2771e4e3
     }
 }
