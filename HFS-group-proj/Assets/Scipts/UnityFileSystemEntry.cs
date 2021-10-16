@@ -14,11 +14,12 @@ public class UnityFileSystemEntry
     public string Name { get; set; }
     public long Length { get; set; }
     public DateTime LastModified { get; set; }
-
+    public RootMaster Master { get; set; }
     public Vector3 Position { get; set; }
 
     public UnityFileSystemEntry(UnityFileSystemEntry parent)
     {
         //Parent = parent;
+        Master = null;
     }
 }

@@ -1,132 +1,322 @@
-﻿using System;
+﻿#region License Information
+/* HeuristicLab
+ * Copyright (C) 2002-2013 Heuristic and Evolutionary Algorithms Laboratory (HEAL)
+ *
+ * This file is part of HeuristicLab.
+ *
+ * HeuristicLab is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * HeuristicLab is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with HeuristicLab. If not, see <http://www.gnu.org/licenses/>.
+ */
+#endregion
+
+using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
 
-namespace Reader
+namespace HeuristicLab.Encodings.SymbolicExpressionTreeEncoding.Views
 {
-    class FileOrDirectory
-    {
-        public List<FileOrDirectory> Children { get; set; }
-        public FileOrDirectory Parent { get; set; }public string Path { get; set; }
-        
-        public string Name { get; set; }
-        
-        // size (number_of_items) dervied: Children.Count
-        public int Size { get; set; }
-        public DateTime LastModified { get; set; }
+	public class Node
+	{
+		public Node Thread;
+		public Node Ancestor;
 
-        // Process all files in the directory passed in, recurse on any directories
-        // that are found, and process the files they contain.
-        public FileOrDirectory ProcessDirectory(string targetDirectory, int depth)
-        {
-            if (depth > 1)
-                return null;
+		public float Mod; // position modifier
+		public float Prelim;
+		public float Change;
+		public float Shift;
+		public int Number;
 
-            // Process the list of files found in the directory.
-            string[] fileEntries;
+		public float X;
+		public float Y;
 
-            try
-            {
-                fileEntries = System.IO.Directory.GetFiles(targetDirectory);
-            }
-            catch (System.UnauthorizedAccessException)
-            {
-                fileEntries = new string[0];
-            }
+		public ISymbolicExpressionTreeNode SymbolicExpressionTreeNode;
 
-            var childTree = new List<FileOrDirectory>();
+		public bool IsLeaf
+		{
+			get { return SymbolicExpressionTreeNode.SubtreeCount == 0; }
+		}
+	}
 
-            foreach (string fileName in fileEntries)
-                childTree.Add(ProcessFile(fileName));
+	public class TreeLayout
+	{
+		private float distance = 5;
+		public float Distance
+		{
+			get { return distance; }
+			set { distance = value; }
+		}
 
-            // Recurse into subdirectories of this directory.
-            string[] subdirectoryEntries;
+		private ISymbolicExpressionTree symbolicExpressionTree;
+		public ISymbolicExpressionTree SymbolicExpressionTree
+		{
+			get { return symbolicExpressionTree; }
+			set
+			{
+				symbolicExpressionTree = value;
+				nodes.Clear();
+				var treeNodes = SymbolicExpressionTree.IterateNodesBreadth().ToList();
+				foreach (var treeNode in treeNodes)
+				{
+					var node = new Node { SymbolicExpressionTreeNode = treeNode };
+					node.Ancestor = node;
+					nodes.Add(treeNode, node);
+				}
+				// assign a number to each node, representing its position among its siblings (parent.IndexOfSubtree)
+				foreach (var treeNode in treeNodes.Where(x => x.SubtreeCount > 0))
+				{
+					for (int i = 0; i != treeNode.SubtreeCount; ++i)
+					{
+						nodes[treeNode.GetSubtree(i)].Number = i;
+					}
+				}
+				var r = nodes[symbolicExpressionTree.Root];
+				FirstWalk(r);
+				SecondWalk(r, -r.Prelim);
+				NormalizeCoordinates();
+			}
+		}
 
-            try
-            {
-                subdirectoryEntries = System.IO.Directory.GetDirectories(targetDirectory);
-            }
-            catch (System.UnauthorizedAccessException)
-            {
-                subdirectoryEntries = new string[0];
-            }
+		/// <summary>
+		/// Returns a map of coordinates for each node in the symbolic expression tree.
+		/// </summary>
+		/// <returns></returns>
+		public Dictionary<ISymbolicExpressionTreeNode, PointF> GetNodeCoordinates()
+		{
+			var dict = new Dictionary<ISymbolicExpressionTreeNode, PointF>();
+			if (nodes == null || nodes.Count == 0) return dict;
+			foreach (var node in nodes.Values)
+			{
+				dict.Add(node.SymbolicExpressionTreeNode, new PointF { X = node.X, Y = node.Y });
+			}
+			return dict;
+		}
 
-            foreach (string subdirectory in subdirectoryEntries)
-                childTree.Add(ProcessDirectory(subdirectory, depth + 1));
+		/// <summary>
+		/// Returns the bounding box for this layout. When the layout is normalized, the rectangle should be [0,0,xmin,xmax].
+		/// </summary>
+		/// <returns></returns>
+		public RectangleF Bounds()
+		{
+			float xmin, xmax, ymin, ymax; xmin = xmax = ymin = ymax = 0;
+			var list = nodes.Values.ToList();
+			for (int i = 0; i != list.Count; ++i)
+			{
+				float x = list[i].X, y = list[i].Y;
+				if (xmin > x) xmin = x;
+				if (xmax < x) xmax = x;
+				if (ymin > y) ymin = y;
+				if (ymax < y) ymax = y;
+			}
+			return new RectangleF(xmin, ymin, xmax + distance, ymax + distance);
+		}
 
-            System.IO.DirectoryInfo dirInfo = new System.IO.DirectoryInfo(targetDirectory);
-            FileOrDirectory d = new FileOrDirectory();
-            d.Path = targetDirectory;
-            d.Name = dirInfo.Name;
-            d.Size = childTree.Count;
-            d.LastModified = dirInfo.LastWriteTime;
-            d.Children = childTree;
+		/// <summary>
+		/// Returns a string containing all the coordinates (useful for debugging).
+		/// </summary>
+		/// <returns></returns>
+		public string DumpCoordinates()
+		{
+			if (nodes == null || nodes.Count == 0) return string.Empty;
+			return nodes.Values.Aggregate("", (current, node) => current + (node.X + " " + node.Y + Environment.NewLine));
+		}
 
+		private readonly Dictionary<ISymbolicExpressionTreeNode, Node> nodes;
 
-            Console.WriteLine("Processed dir '{0}'.\n", targetDirectory);
-            //System.IO.DirectoryInfo dirInfo = new System.IO.DirectoryInfo(targetDirectory);
-            //Console.WriteLine(dirInfo.LastWriteTime);
-            return d;
-        }
+		public TreeLayout()
+		{
+			nodes = new Dictionary<ISymbolicExpressionTreeNode, Node>();
+		}
 
-        // Insert logic for processing found files here.
-        public FileOrDirectory ProcessFile(string path)
-        {
-            var fInfo = new System.IO.FileInfo(path);
+		/// <summary>
+		/// Transform node coordinates so that all coordinates are positive and start from 0.
+		/// </summary>
+		private void NormalizeCoordinates()
+		{
+			var list = nodes.Values.ToList();
+			float xmin = 0, ymin = 0;
+			for (int i = 0; i != list.Count; ++i)
+			{
+				if (xmin > list[i].X) xmin = list[i].X;
+				if (ymin > list[i].Y) ymin = list[i].Y;
+			}
+			for (int i = 0; i != list.Count; ++i)
+			{
+				list[i].X -= xmin;
+				list[i].Y -= ymin;
+			}
+		}
 
-            FileOrDirectory f = new FileOrDirectory();
-            f.Path = path;
-            f.Name = fInfo.Name;
-            f.Size = 0;
-            f.LastModified = fInfo.LastWriteTime;
-            f.Children = null;
+		private void FirstWalk(Node v)
+		{
+			Node w;
+			if (v.IsLeaf)
+			{
+				w = LeftSibling(v);
+				if (w != null)
+				{
+					v.Prelim = w.Prelim + distance;
+				}
+			}
+			else
+			{
+				var symbExprNode = v.SymbolicExpressionTreeNode;
+				var defaultAncestor = nodes[symbExprNode.GetSubtree(0)]; // let defaultAncestor be the leftmost child of v
+				for (int i = 0; i != symbExprNode.SubtreeCount; ++i)
+				{
+					var s = symbExprNode.GetSubtree(i);
+					w = nodes[s];
+					FirstWalk(w);
+					Apportion(w, ref defaultAncestor);
+				}
+				ExecuteShifts(v);
+				int c = symbExprNode.SubtreeCount;
+				var leftmost = nodes[symbExprNode.GetSubtree(0)];
+				var rightmost = nodes[symbExprNode.GetSubtree(c - 1)];
+				float midPoint = (leftmost.Prelim + rightmost.Prelim) / 2;
+				w = LeftSibling(v);
+				if (w != null)
+				{
+					v.Prelim = w.Prelim + distance;
+					v.Mod = v.Prelim - midPoint;
+				}
+				else
+				{
+					v.Prelim = midPoint;
+				}
+			}
+		}
 
-            return f;
-        }
-    }
+		private void SecondWalk(Node v, float m)
+		{
+			v.X = v.Prelim + m;
+			v.Y = symbolicExpressionTree.Root.GetBranchLevel(v.SymbolicExpressionTreeNode) * distance;
+			var symbExprNode = v.SymbolicExpressionTreeNode;
+			foreach (var s in symbExprNode.Subtrees)
+			{
+				SecondWalk(nodes[s], m + v.Mod);
+			}
+		}
 
-    class Program
-    {
-        static void Main(string[] args)
-        {
-            // obtain names of all logical drives on the computer.
-            String[] drives = Environment.GetLogicalDrives();
-            Console.WriteLine("GetLogicalDrives: {0}", String.Join(", ", drives));
+		private void Apportion(Node v, ref Node defaultAncestor)
+		{
+			var w = LeftSibling(v);
+			if (w == null) return;
+			Node vip = v;
+			Node vop = v;
+			Node vim = w;
+			Node vom = LeftmostSibling(vip);
 
-            //RecursiveFileProcessor
-            FileOrDirectory root = new FileOrDirectory();
-            root = root.ProcessDirectory(drives[0], 0);
+			float sip = vip.Mod;
+			float sop = vop.Mod;
+			float sim = vim.Mod;
+			float som = vom.Mod;
 
-            Console.WriteLine(root.Path);
-            Console.WriteLine(root.Name);
-            Console.WriteLine(root.Size);
-            Console.WriteLine(root.Children[0].Path);
-            Console.WriteLine(root.Children[0].Name);
+			while (NextRight(vim) != null && NextLeft(vip) != null)
+			{
+				vim = NextRight(vim);
+				vip = NextLeft(vip);
+				vom = NextLeft(vom);
+				vop = NextRight(vop);
+				vop.Ancestor = v;
+				float shift = (vim.Prelim + sim) - (vip.Prelim + sip) + distance;
+				if (shift > 0)
+				{
+					var ancestor = Ancestor(vim, v) ?? defaultAncestor;
+					MoveSubtree(ancestor, v, shift);
+					sip += shift;
+					sop += shift;
+				}
+				sim += vim.Mod;
+				sip += vip.Mod;
+				som += vom.Mod;
+				sop += vop.Mod;
+			}
+			if (NextRight(vim) != null && NextRight(vop) == null)
+			{
+				vop.Thread = NextRight(vim);
+				vop.Mod += (sim - sop);
+			}
+			if (NextLeft(vip) != null && NextLeft(vom) == null)
+			{
+				vom.Thread = NextLeft(vip);
+				vom.Mod += (sip - som);
+				defaultAncestor = v;
+			}
+		}
 
-            { 
-            /*
-            // drive info for first drive on computer
-            System.IO.DriveInfo di = new System.IO.DriveInfo(@drives[0]);
-            System.IO.DirectoryInfo dirInfo = di.RootDirectory;
-            Console.WriteLine(dirInfo.Attributes.ToString());
+		private void MoveSubtree(Node wm, Node wp, float shift)
+		{
+			int subtrees = wp.Number - wm.Number;
+			wp.Change -= shift / subtrees;
+			wp.Shift += shift;
+			wm.Change += shift / subtrees;
+			wp.Prelim += shift;
+			wp.Mod += shift;
+		}
 
-            // Get the files in the directory and print out some information about them.
-            System.IO.FileInfo[] fileNames = dirInfo.GetFiles("*.*");
+		private void ExecuteShifts(Node v)
+		{
+			if (v.IsLeaf) return;
+			float shift = 0;
+			float change = 0;
+			for (int i = v.SymbolicExpressionTreeNode.SubtreeCount - 1; i >= 0; --i)
+			{
+				var subtree = v.SymbolicExpressionTreeNode.GetSubtree(i);
+				var w = nodes[subtree];
+				w.Prelim += shift;
+				w.Mod += shift;
+				change += w.Change;
+				shift += (w.Shift + change);
+			}
+		}
 
-            foreach (System.IO.FileInfo fi in fileNames)
-            {
-                Console.WriteLine("{0}: {1}: {2}", fi.Name, fi.LastAccessTime, fi.Length);
-            }
+		#region Helper functions
+		private Node Ancestor(Node vi, Node v)
+		{
+			var ancestor = vi.Ancestor;
+			return ancestor.SymbolicExpressionTreeNode.Parent == v.SymbolicExpressionTreeNode.Parent ? ancestor : null;
+		}
 
-            System.IO.DirectoryInfo[] dirInfos = dirInfo.GetDirectories("*.*");
+		private Node NextLeft(Node v)
+		{
+			int c = v.SymbolicExpressionTreeNode.SubtreeCount;
+			return c == 0 ? v.Thread : nodes[v.SymbolicExpressionTreeNode.GetSubtree(0)]; // return leftmost child
+		}
 
-            // Get the subdirectories directly that is under the root.
-            // See "How to: Iterate Through a Directory Tree" for an example of how to
-            // iterate through an entire tree.
-            foreach (System.IO.DirectoryInfo d in dirInfos)
-            {
-                Console.WriteLine(d.Name);
-            }
-            */}
-        }
-    }
+		private Node NextRight(Node v)
+		{
+			int c = v.SymbolicExpressionTreeNode.SubtreeCount;
+			return c == 0 ? v.Thread : nodes[v.SymbolicExpressionTreeNode.GetSubtree(c - 1)]; // return rightmost child
+		}
+
+		private Node LeftSibling(Node n)
+		{
+			var parent = n.SymbolicExpressionTreeNode.Parent;
+			if (parent == null) return null;
+			int i = parent.IndexOfSubtree(n.SymbolicExpressionTreeNode);
+			if (i == 0) return null;
+			return nodes[parent.GetSubtree(i - 1)];
+		}
+
+		private Node LeftmostSibling(Node n)
+		{
+			var parent = n.SymbolicExpressionTreeNode.Parent;
+			if (parent == null) return null;
+			int i = parent.IndexOfSubtree(n.SymbolicExpressionTreeNode);
+			if (i == 0) return null;
+			return nodes[parent.GetSubtree(0)];
+		}
+		#endregion
+	}
 }

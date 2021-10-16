@@ -6,7 +6,7 @@ using UnityEngine;
 public class UnityDirectory : UnityFileSystemEntry
 {
 
-    public static int PROCESS_DEPTH_MAX = 3;
+    public static int PROCESS_DEPTH_MAX = 4;
 
     public UnityDirectory Parent { get; set; }
 
@@ -17,12 +17,13 @@ public class UnityDirectory : UnityFileSystemEntry
 
     // position in space
     public float Mod { get; set; }
-    public float Width { get; set; }
-    public int Height { get; set; }
     public float X { get; set; }
     public int Y { get; set; }
-    public List<UnityDirectory> GraphedChildren { get; set; }
+    public float Z { get; set; } 
 
+    public GameObject ob { get; set; }
+
+    public List<UnityDirectory> GraphedChildren { get; set; }
 
     public UnityDirectory(string path, int depth = 0, UnityDirectory parent = null) : base(parent)
     {
@@ -87,7 +88,15 @@ public class UnityDirectory : UnityFileSystemEntry
         }
     }
 
-    // graphing
+    #region Node Magic
+
+    public UnityDirectory GetPreviousCousin()
+    {
+        if (this.Parent == null || this.IsLeftMost())
+            return null;
+
+        return this.Parent.GraphedChildren[this.Parent.GraphedChildren.IndexOf(this) - 1];
+    }
 
     public bool IsLeaf()
     {
@@ -153,6 +162,8 @@ public class UnityDirectory : UnityFileSystemEntry
         return this.GraphedChildren[GraphedChildren.Count - 1];
     }
 
+    #endregion 
+
     public void LogPrint(UnityDirectory node)
     {
         foreach (var child in node.Children)
@@ -163,15 +174,27 @@ public class UnityDirectory : UnityFileSystemEntry
                 LogPrint(child2);
             }
         }
+        
         Debug.Log(node.Path);
-        Debug.Log(node.X);
-        Debug.Log(node.Y);
-        Debug.Log(' ');
+        Debug.Log(node.Master.Name);
+      
+       // Debug.Log(node.X);
+        //Debug.Log(node.Y);
+        //Debug.Log(' ');
     }
 
     public void Log<t>(t str)
     {
         Debug.Log(str);
-
     }
+
+    public void updateMaster(UnityDirectory node)
+    {
+        foreach (var child in node.GraphedChildren)
+        {
+            child.Master = Master;
+            updateMaster(child);
+        }
+    }
+
 }

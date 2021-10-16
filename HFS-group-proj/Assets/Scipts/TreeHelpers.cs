@@ -6,19 +6,23 @@ using System.Threading.Tasks;
 
 namespace DrawTreeTest
 {
+
     public static class TreeHelpers
     {
         private static int nodeSize = 4;
-        private static float siblingDistance = 1F;
-        private static float treeDistance = 0.0F;
- 
+        private static float siblingDistance = 2F;
+        private static float treeDistance = 1F;
+
+        //main
         public static void CalculateNodePositions(UnityDirectory rootNode)
         {
+            List<int> yList = new List<int>();
+
             // initialize node x, y, and mod values
-            InitializeNodes(rootNode, 0);
+            InitializeNodes(rootNode, 0, yList);
 
             // assign initial X and Mod values for nodes
-            CalculateInitialX(rootNode);
+            CalculateInitialX(rootNode, yList);
 
             // ensure no node is being drawn off screen
            // CheckAllChildrenOnScreen(rootNode);
@@ -26,50 +30,43 @@ namespace DrawTreeTest
             // assign final X values to nodes
             CalculateFinalPositions(rootNode, 0);
         }
-        
+
         // recusrively initialize x, y, and mod values of nodes
-        private static void InitializeNodes(UnityDirectory node, int depth)
+        private static void InitializeNodes(UnityDirectory node, int depth, List<int> yList)
         {
             node.X = -1;
             node.Y = depth;
+            yList.Insert(depth, 0);
             node.Mod = 0;
+            node.Z = 0;
 
             foreach (UnityDirectory child in node.GraphedChildren)
-                InitializeNodes(child, depth + 1);
+                InitializeNodes(child, depth + 1, yList);
+
+            if (node.Parent != null)
+            {
+                foreach (UnityDirectory child in node.Parent.GraphedChildren)
+                {
+                    if (child.Size > yList[depth])
+                    {
+                        yList[depth] = child.Size;
+                    }
+                }
+            }
         }
 
-        private static void CalculateFinalPositions(UnityDirectory node, float modSum)
+        private static void CalculateInitialX(UnityDirectory node, List<int> yList)
         {
-            node.X += modSum;
-            modSum += node.Mod;
+
+            node.Z = yList[node.Y];
 
             foreach (UnityDirectory child in node.GraphedChildren)
                 if (child.EntryType == UnityDirectory.Type.Directory)
                 {
-                    CalculateFinalPositions(child, modSum);
+                    CalculateInitialX(child, yList);
                 }
+            // Postorder
 
-            //childless = leaf
-            if (node.GraphedChildren.Count == 0)
-            {
-                node.Width = node.X;
-                node.Height = node.Y;
-            }
-            //has chidlren
-            else
-            {
-                node.Width = node.GraphedChildren.OrderByDescending(p => p.Width).First().Width;
-                node.Height = node.GraphedChildren.OrderByDescending(p => p.Height).First().Height;
-            }
-        }
-
-        private static void CalculateInitialX(UnityDirectory node)
-        {
-            foreach (UnityDirectory child in node.GraphedChildren)
-                if (child.EntryType == UnityDirectory.Type.Directory)
-                {
-                    CalculateInitialX(child);
-                }
 
             // if no children
             if (node.IsLeaf())
@@ -81,6 +78,7 @@ namespace DrawTreeTest
                     // if this is the first node in a set, set X to 0
                     node.X = 0;
             }
+
             // if there is only one child
             else if (node.GraphedChildren.Count == 1)
             {
@@ -91,10 +89,12 @@ namespace DrawTreeTest
                 }
                 else
                 {
+                    node.Log<string>(node.Path);
                     node.X = node.GetPreviousSibling().X + nodeSize + siblingDistance;
                     node.Mod = node.X - node.GraphedChildren[0].X;
                 } 
             }
+
             // many children.
             else
             {
@@ -112,21 +112,28 @@ namespace DrawTreeTest
                     node.Mod = node.X - mid;
                 }
             }
-            node.Log<float>(node.Mod);
-            /*
-            if (node.Mod > 1000)
-            {
-                node.Mod = 1000;
-            }
-            */
+
             if (node.GraphedChildren.Count > 0 && !node.IsLeftMost())
             {
                 // Since subtrees can overlap, check for conflicts and shift tree right if needed
-                CheckForConflicts(node);
+                //CheckForConflicts(node);
             }
  
         }
- 
+
+        private static void CalculateFinalPositions(UnityDirectory node, float modSum)
+        {
+
+            node.X += modSum;
+            modSum += node.Mod;
+
+            foreach (UnityDirectory child in node.GraphedChildren)
+                if (child.EntryType == UnityDirectory.Type.Directory)
+                {
+                    CalculateFinalPositions(child, modSum);
+                }
+        }
+
         private static void CheckForConflicts(UnityDirectory node)
         {
             var minDistance = treeDistance + nodeSize;
@@ -233,6 +240,10 @@ namespace DrawTreeTest
                 values[node.Y] = Math.Max(values[node.Y], node.X + modSum);
  
             modSum += node.Mod;
+            if (node.GraphedChildren.Count == 0)
+            {
+                return;
+            }
             foreach (var child in node.GraphedChildren)
             {
                 GetRightContour(child, modSum, ref values);
