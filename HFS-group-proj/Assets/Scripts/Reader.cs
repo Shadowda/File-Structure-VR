@@ -1,16 +1,29 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+<<<<<<< HEAD
 using UnityEngine;
+=======
+
+using UnityEngine;
+using UnityEngine.XR.Interaction.Toolkit;
+
+>>>>>>> 20f08ed6622c0f3f1e7d0635d4eb973b2771e4e3
 using NLT;
 
 public class Reader : MonoBehaviour
 {
+<<<<<<< HEAD
+=======
+    public string RootPath;
+    public XRRig Rig;
+>>>>>>> 20f08ed6622c0f3f1e7d0635d4eb973b2771e4e3
     public GameObject[] EntryType;
 
     // Start is called before the first frame update
     void Start()
     {
+<<<<<<< HEAD
 
         // Obtain names of all logical drives on the computer, set root to first drive.
         string[] drives = Environment.GetLogicalDrives();
@@ -25,6 +38,17 @@ public class Reader : MonoBehaviour
         //root.LogPrint(root);
 
         Place(treeRoot, null);
+=======
+        // Obtain names of all logical drives on the computer, set root to first drive.
+        string[] drives = Environment.GetLogicalDrives();
+        UnityDirectory root = new UnityDirectory(RootPath != "" ? RootPath : drives[0], 0);
+
+        NLT_Tree.Tree treeRoot = root.convert(root);
+        treeRoot.layout(treeRoot);
+        Place(treeRoot, null);
+
+        Rig.MoveCameraToWorldLocation(new Vector3(treeRoot.x * 2, 0, treeRoot.y * 20));
+>>>>>>> 20f08ed6622c0f3f1e7d0635d4eb973b2771e4e3
     }
 
     // Update is called once per frame
@@ -35,6 +59,7 @@ public class Reader : MonoBehaviour
 
     public void Place(NLT_Tree.Tree node, NLT_Tree.Tree Parent)
     {
+<<<<<<< HEAD
         //Vector3 spawnPosition = new Vector3(node.x * 2, 0, node.y * 20);
         //GameObject ob = Instantiate(EntryType[2], spawnPosition + transform.TransformPoint(0, 0, 0), gameObject.transform.rotation);
 
@@ -62,12 +87,19 @@ public class Reader : MonoBehaviour
         //ob.transform.localScale = new Vector3(node.w, 1, node.h);
 
         if (Parent != null)
+=======
+        Vector3 spawnPosition = new Vector3(node.x * 2, 0, node.y * 20);
+        GameObject ob = Instantiate(EntryType[2], spawnPosition + transform.TransformPoint(0, 0, 0), gameObject.transform.rotation);
+
+        if(Parent != null)
+>>>>>>> 20f08ed6622c0f3f1e7d0635d4eb973b2771e4e3
         {
             LineRenderer lineRenderer = ob.AddComponent<LineRenderer>();
             lineRenderer.material = new Material(Shader.Find("Sprites/Default"));
             lineRenderer.widthMultiplier = 0.2f;
             lineRenderer.positionCount = 2;
 
+<<<<<<< HEAD
             xc = (Parent.x + Parent.x + Parent.w - 1) / 2;
             yc = (Parent.y + Parent.y + Parent.h) / 2;
             Vector3 cen2 = new Vector3(xc, 0, yc);
@@ -77,6 +109,13 @@ public class Reader : MonoBehaviour
             lineRenderer.SetPosition(1, cen2);
         }
         
+=======
+            Vector3 spawnPosition2 = new Vector3(Parent.x * 2, 0, Parent.y * 20);
+            lineRenderer.SetPosition(0, spawnPosition);
+            lineRenderer.SetPosition(1, spawnPosition2);
+        }
+
+>>>>>>> 20f08ed6622c0f3f1e7d0635d4eb973b2771e4e3
         foreach (var child in node.c)
         {
             Place(child, node);

@@ -47,17 +47,26 @@ namespace NLT
 			public List<Tree> c;
 			public int cs;
 
+<<<<<<< HEAD
 			public string Path;
 			#endregion
 
 			public Tree(float w, float h, float y, List<Tree> c, string p)
+=======
+			#endregion
+
+			public Tree(float w, float h, float y, List<Tree> c)
+>>>>>>> 20f08ed6622c0f3f1e7d0635d4eb973b2771e4e3
 			{
 				this.w = w;
 				this.h = h;
 				this.y = y;
 				this.c = c;
 				this.cs = c.Count;
+<<<<<<< HEAD
 				this.Path = p;
+=======
+>>>>>>> 20f08ed6622c0f3f1e7d0635d4eb973b2771e4e3
 			}
 
 			// --------------------------------------------------------------------------------------------------------------------
@@ -79,13 +88,20 @@ namespace NLT
 				firstWalk(t.c[0]);
 
 				// Create siblings in contour minimal vertical coordinate and index list.
+<<<<<<< HEAD
 				IYL ih = updateIYL(bottom(t.c[0].el), 0, null);
+=======
+				var ih = updateIYL(bottom(t.c[0].el), 0, null);
+>>>>>>> 20f08ed6622c0f3f1e7d0635d4eb973b2771e4e3
 				for (var i = 1; i < t.cs; i++)
 				{
 					firstWalk(t.c[i]);
 					//Store lowest vertical coordinate while extreme nodes still point in current subtree.
 					var minY = bottom(t.c[i].er);
+<<<<<<< HEAD
 					//Debug.Log(ih);
+=======
+>>>>>>> 20f08ed6622c0f3f1e7d0635d4eb973b2771e4e3
 					seperate(t, i, ih);
 					ih = updateIYL(minY, i, ih);
 				}
@@ -129,6 +145,7 @@ namespace NLT
 					if (dist > 0)
 					{
 						mscl += dist;
+<<<<<<< HEAD
 
 						//Debug.Log(t);
 						//Debug.Log(i);
@@ -136,6 +153,8 @@ namespace NLT
 						//Debug.Log(ih.index);
 						//Debug.Log(dist);
 
+=======
+>>>>>>> 20f08ed6622c0f3f1e7d0635d4eb973b2771e4e3
 						moveSubtree(t, i, ih.index, dist);
 					}
 					var sy = bottom(sr);
@@ -171,7 +190,10 @@ namespace NLT
 				}
 			}
 
+<<<<<<< HEAD
 			#region region tree magic 
+=======
+>>>>>>> 20f08ed6622c0f3f1e7d0635d4eb973b2771e4e3
 			public void moveSubtree(Tree t, int i, int si, float dist)
 			{
 				// Move subtree by changing mod.  
@@ -264,7 +286,10 @@ namespace NLT
 					t.c[i].mod += modsumdelta;
 				}
 			}
+<<<<<<< HEAD
 			#endregion
+=======
+>>>>>>> 20f08ed6622c0f3f1e7d0635d4eb973b2771e4e3
 
 			// A linked list of the indexes of left siblings and their lowest vertical coordinate.  
 			public class IYL

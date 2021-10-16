@@ -6,7 +6,11 @@ using UnityEngine;
 public class UnityDirectory : UnityFileSystemEntry
 {
 
+<<<<<<< HEAD
     public static int PROCESS_DEPTH_MAX = 3;
+=======
+    public static int PROCESS_DEPTH_MAX = 2;
+>>>>>>> 20f08ed6622c0f3f1e7d0635d4eb973b2771e4e3
 
     public UnityDirectory Parent { get; set; }
 
@@ -43,6 +47,7 @@ public class UnityDirectory : UnityFileSystemEntry
             ProcessChildren(depth + 1);
         }
 
+<<<<<<< HEAD
         width = this.Size;
         height = 5;
         y = depth;
@@ -54,6 +59,12 @@ public class UnityDirectory : UnityFileSystemEntry
             }
         }
         
+=======
+        width = 2;
+        height = 2;
+        y = (float) depth;
+
+>>>>>>> 20f08ed6622c0f3f1e7d0635d4eb973b2771e4e3
     }
 
     private void ProcessChildren(int depth)
@@ -112,8 +123,15 @@ public class UnityDirectory : UnityFileSystemEntry
         }
         
         Debug.Log(node.Path);
+<<<<<<< HEAD
         Debug.Log(node.width);
         Debug.Log(node.height);
+=======
+        Debug.Log(node.Master.Name);
+      
+       // Debug.Log(node.X);
+        //Debug.Log(node.Y);
+>>>>>>> 20f08ed6622c0f3f1e7d0635d4eb973b2771e4e3
         //Debug.Log(' ');
     }
 
@@ -142,6 +160,7 @@ public class UnityDirectory : UnityFileSystemEntry
             children.Add(convert(child));
         }
 
+<<<<<<< HEAD
         return new NLT.NLT_Tree.Tree(root.width, root.height, root.y, children, root.Path);
     }
 
@@ -156,5 +175,8 @@ public class UnityDirectory : UnityFileSystemEntry
             updateY(child);
         }
 
+=======
+        return new NLT.NLT_Tree.Tree(root.width, root.height, root.y, children);
+>>>>>>> 20f08ed6622c0f3f1e7d0635d4eb973b2771e4e3
     }
 }
