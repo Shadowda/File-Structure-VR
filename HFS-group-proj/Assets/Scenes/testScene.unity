@@ -1082,7 +1082,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44282e6ea8220fb42bb788bd71fe315a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  RootPath: 
+  RootPath: C:\
   Rig: {fileID: 1345020316}
   EntryType:
   - {fileID: 8719154703047282913, guid: ae8b34f37ec511049adfea672ac3aebd, type: 3}
