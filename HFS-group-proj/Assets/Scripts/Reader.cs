@@ -11,7 +11,7 @@ public class Reader : MonoBehaviour
     public XRRig Rig;
     public GameObject[] EntryType;
 
-    // Start is called before the first frame update
+    // Main - called before the first frame update
     void Start()
     {
         // Obtain names of all logical drives on the computer, set root to first drive.
@@ -48,9 +48,9 @@ public class Reader : MonoBehaviour
 
         Vector3 cen = new Vector3(xc, 0, yc);
 
-        GameObject ob = Instantiate(EntryType[0], cen + transform.TransformPoint(0, 0, 0), gameObject.transform.rotation);
+        GameObject ob = Instantiate(EntryType[2], cen + transform.TransformPoint(0, 0, 0), gameObject.transform.rotation);
         ob.name = node.Path;
-        ob.transform.localScale = new Vector3(node.w - 2, 1, 1);
+        ob.transform.localScale = new Vector3(node.w - 1, 1, node.h - 1);
 
         GameObject ob1 = Instantiate(EntryType[1], s2 + transform.TransformPoint(0, 0, 0), gameObject.transform.rotation);
         GameObject ob2 = Instantiate(EntryType[1], s3 + transform.TransformPoint(0, 0, 0), gameObject.transform.rotation);
@@ -58,8 +58,6 @@ public class Reader : MonoBehaviour
         ob1.transform.SetParent(ob.transform);
         ob2.transform.SetParent(ob.transform);
         ob3.transform.SetParent(ob.transform);
-
-        //ob.transform.localScale = new Vector3(node.w, 1, node.h);
 
         if (Parent != null)
         {
@@ -83,41 +81,4 @@ public class Reader : MonoBehaviour
         }
     }
 
-    /*
-    public void Place(UnityDirectory node)
-    {
-        Vector3 spawnPosition = new Vector3(node.X, 0 , node.Y * 15);
-
-        //Vector3 spawnPosition = new Vector3(node.X, -node.Y * 15, node.Z);
-
-        node.ob = Instantiate(EntryType[2], spawnPosition + transform.TransformPoint(0, 0, 0), gameObject.transform.rotation);
-        node.ob.name = node.Path;
-
-        //Debug.Log(node.ob.name);
-        //Debug.Log(node.ob.transform.position);
-        //Debug.Log(node.ob.transform.localPosition);
-
-        if (node.Parent != null) { 
-            node.ob.transform.SetParent(node.Parent.ob.transform);
-            //node.ob.transform.localPosition += new Vector3(0, 10, 0);
-            //node.ob.transform.SetParent(null);
-        }
-
-        //ob.transform.localScale = ob.transform.localScale + new Vector3(node.Size/10, 0, node.Size/10);
-
-        //var ob = Instantiate(EntryType[(int)node.EntryType], spawnPosition + transform.TransformPoint(0, 0, 0), gameObject.transform.rotation);
-
-
-        
-
-        foreach (var child in node.Children)
-        {
-            var child2 = child as UnityDirectory;
-            if (child2 != null)
-            {
-                Place(child2);
-            }
-        }
-    }
-    */
 }
