@@ -129,13 +129,6 @@ namespace NLT
 					if (dist > 0)
 					{
 						mscl += dist;
-
-						//Debug.Log(t);
-						//Debug.Log(i);
-						//Debug.Log(ih);
-						//Debug.Log(ih.index);
-						//Debug.Log(dist);
-
 						moveSubtree(t, i, ih.index, dist);
 					}
 					var sy = bottom(sr);
@@ -305,6 +298,7 @@ namespace NLT
 				Debug.Log(node.y);
 				//Debug.Log(' ');
 			}
+
 		}
 	}
 }

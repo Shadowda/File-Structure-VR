@@ -6,7 +6,7 @@ using UnityEngine;
 public class UnityDirectory : UnityFileSystemEntry
 {
 
-    public static int PROCESS_DEPTH_MAX = 3;
+    public static int PROCESS_DEPTH_MAX = 6;
 
     public UnityDirectory Parent { get; set; }
 
@@ -43,15 +43,45 @@ public class UnityDirectory : UnityFileSystemEntry
             ProcessChildren(depth + 1);
         }
 
-        width = this.Size;
-        height = 5;
+       // width = 5;
+        //height = 5;
+        //y = depth;
+
+        
+        width = Math.Max(this.Size/2, 2);
+        height = Math.Max(this.Size/2, 2);
         y = depth;
+        
+
         if (Parent == null)
         {
             foreach (var child in this.GraphedChildren)
             {
                 updateY(child);
             }
+        }
+
+    }
+
+    public void updateY(UnityDirectory node)
+    {
+
+        node.y = node.Parent.y + node.Parent.height + 2;
+
+        if (node.Parent.GraphedChildren.Count == 1)
+        {
+            //node.y = node.Parent.y + node.Parent.height + 1; 
+        }
+
+        if (node.Size / 2 > 20)
+        {
+            Debug.Log(node.Path);
+            Debug.Log(node.Size);
+            //node.y += node.Size;
+        }
+        foreach (var child in node.GraphedChildren)
+        {
+            updateY(child);
         }
 
     }
@@ -144,18 +174,5 @@ public class UnityDirectory : UnityFileSystemEntry
         }
 
         return new NLT.NLT_Tree.Tree(root.width, root.height, root.y, children, root.Path);
-    }
-
-    public void updateY(UnityDirectory node)
-    {
-        Debug.Log(node.Path);
-        Debug.Log(node.y);
-        node.y = node.Parent.y + node.Parent.height + 2;
-
-        foreach (var child in node.GraphedChildren)
-        {
-            updateY(child);
-        }
-
     }
 }
