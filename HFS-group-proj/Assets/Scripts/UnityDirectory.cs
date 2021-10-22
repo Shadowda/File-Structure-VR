@@ -15,44 +15,34 @@ public class UnityDirectory : UnityFileSystemEntry
 
     public int Size { get; set; }
 
-    public GameObject ob { get; set; }
-
     public float width { get; set; }
     public float height { get; set; }
-
-    public float x { get; set; }
-    public float y { get; set; }
+    public float y;
 
     public List<UnityDirectory> GraphedChildren { get; set; }
 
     public UnityDirectory(string path, int depth = 0, UnityDirectory parent = null) : base(parent)
     {
-        Parent = parent;
-        Info = new System.IO.DirectoryInfo(path);
-        EntryType = UnityFileSystemEntry.Type.Directory;
-        Path = path;
-        Name = Info.Name;
-        LastModified = Info.LastWriteTime;
-        Position = new Vector3(0f, 0f, 0f);
-        Children = new List<UnityFileSystemEntry>();
-        GraphedChildren = new List<UnityDirectory>();
+        this.Parent = parent;
+        this.Info = new System.IO.DirectoryInfo(path);
+        this.EntryType = Type.Directory;
+        this.Path = path;
+        this.Name = Info.Name;
+        this.LastModified = Info.LastWriteTime;
+        this.Position = new Vector3(0f, 0f, 0f);
+        this.Children = new List<UnityFileSystemEntry>();
+        this.GraphedChildren = new List<UnityDirectory>();
 
         // Populate directory children if we aren't at max depth
         if (depth < PROCESS_DEPTH_MAX)
         {
             ProcessChildren(depth + 1);
         }
-
-       // width = 5;
-        //height = 5;
-        //y = depth;
-
         
-        width = Math.Max(this.Size/2, 2);
-        height = Math.Max(this.Size/2, 2);
-        y = depth;
+        this.width = Math.Max(this.Size / 2, 2);
+        this.height = Math.Max(this.Size / 2, 2);
+        this.y = depth;
         
-
         if (Parent == null)
         {
             foreach (var child in this.GraphedChildren)
@@ -60,33 +50,25 @@ public class UnityDirectory : UnityFileSystemEntry
                 updateY(child);
             }
         }
-
     }
 
     public void updateY(UnityDirectory node)
     {
-
         node.y = node.Parent.y + node.Parent.height + 2;
-
-        if (node.Parent.GraphedChildren.Count == 1)
-        {
-            //node.y = node.Parent.y + node.Parent.height + 1; 
-        }
 
         if (node.Size / 2 > 20)
         {
             Debug.Log(node.Path);
             Debug.Log(node.Size);
-            //node.y += node.Size;
         }
+
         foreach (var child in node.GraphedChildren)
         {
             updateY(child);
         }
-
     }
 
-    private void ProcessChildren(int depth)
+    private void ProcessChildren(int depth) 
     {
         if (depth > PROCESS_DEPTH_MAX) { return; }
 
@@ -98,54 +80,39 @@ public class UnityDirectory : UnityFileSystemEntry
             directories = System.IO.Directory.GetDirectories(Path);
             files = System.IO.Directory.GetFiles(Path);
         }
-        catch (System.UnauthorizedAccessException)
+        catch (System.UnauthorizedAccessException) 
         {
             directories = new string[0];
             files = new string[0];
         }
 
         // Add directories to current directory's children
-        foreach (string directory in directories)
+        foreach (string directory in directories) 
         {
-            if (directory != "D:/Users/Pierce T Jackson/Documents")
-            {
-                Children.Add(new UnityDirectory(directory, depth, this));
-            }
+            UnityDirectory dir = new UnityDirectory(directory, depth, this);
+            GraphedChildren.Add(dir); // Directories only -> will turn into tree
+            Children.Add(dir);
         }
 
         // Add files to current directory's children
-        foreach (string file in files)
+        foreach (string file in files) 
         {
             Children.Add(new UnityFile(file, this));
         }
 
         Size = Children.Count;
-
-        for (int i = 0; i < Size; i++)
-        {
-            var child = Children[i] as UnityDirectory;
-            if (child != null)
-            {
-                this.GraphedChildren.Add(child);
-            }
-        }
     }
 
     public void LogPrint(UnityDirectory node)
     {
-        foreach (var child in node.Children)
+        foreach (var directory in node.GraphedChildren)
         {
-            var child2 = child as UnityDirectory;
-            if (child2 != null)
-            {
-                LogPrint(child2);
-            }
+            LogPrint(directory);
         }
 
         Debug.Log(node.Path);
         Debug.Log(node.width);
         Debug.Log(node.height);
-        //Debug.Log(' ');
     }
 
     public void Log<t>(t str)
@@ -162,17 +129,21 @@ public class UnityDirectory : UnityFileSystemEntry
         }
     }
 
-    public NLT.NLT_Tree.Tree convert(UnityDirectory root)
+    public NLT.Node convertToTree() 
     {
-        if (root == null) return null;
+        return convert(this);
+    }
 
-        List<NLT.NLT_Tree.Tree> children = new List<NLT.NLT_Tree.Tree>();
+    public NLT.Node convert(UnityDirectory node)
+    {
+        if (node == null) return null;
 
-        foreach (var child in root.GraphedChildren)
+        List<NLT.Node> children = new List<NLT.Node>();
+        foreach (var child in node.GraphedChildren)
         {
             children.Add(convert(child));
         }
 
-        return new NLT.NLT_Tree.Tree(root.width, root.height, root.y, children, root.Path);
+        return new NLT.Node(node, children);
     }
 }

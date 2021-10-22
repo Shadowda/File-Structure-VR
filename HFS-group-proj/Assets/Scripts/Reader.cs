@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
-using NLT;
 
 public class Reader : MonoBehaviour
 {
@@ -16,15 +15,14 @@ public class Reader : MonoBehaviour
     {
         // Obtain names of all logical drives on the computer, set root to first drive.
         string[] drives = Environment.GetLogicalDrives();
-
         UnityDirectory root = new UnityDirectory(RootPath == "" ? drives[0] : RootPath, 0);
-        NLT_Tree.Tree treeRoot = root.convert(root);
+        NLT.Node treeRoot = root.convertToTree();
 
-        treeRoot.layout(treeRoot);
+        // Calculate positions for tree nodes, place them
+        treeRoot.layout();
         Place(treeRoot, null);
-        //root.LogPrint(root);
 
-        Rig.MoveCameraToWorldLocation(new Vector3(treeRoot.x, 0, treeRoot.y));
+        Rig.MoveCameraToWorldLocation(GetNodeCenter(treeRoot));
     }
 
     // Update is called once per frame
@@ -33,52 +31,54 @@ public class Reader : MonoBehaviour
 
     }
 
-    public void Place(NLT_Tree.Tree node, NLT_Tree.Tree Parent)
+    private Vector3 GetNodeCenter(NLT.Node node) 
     {
-        //Vector3 spawnPosition = new Vector3(node.x * 2, 0, node.y * 20);
-        //GameObject ob = Instantiate(EntryType[2], spawnPosition + transform.TransformPoint(0, 0, 0), gameObject.transform.rotation);
+        return new Vector3((node.x * 2 + node.w - 1) * 0.5f, 0, (node.y * 2 + node.h) * 0.5f);
+    }
 
-        Vector3 s1 = new Vector3(node.x, 0, node.y);
-        Vector3 s2 = new Vector3(node.x + node.w - 1, 0, node.y);
-        Vector3 s3 = new Vector3(node.x, 0, node.y + node.h);
-        Vector3 s4 = new Vector3(node.x + node.w - 1, 0, node.y + node.h);
-
-        float xc = (node.x + node.x + node.w - 1) / 2;
-        float yc = (node.y + node.y + node.h) / 2;
-
-        Vector3 cen = new Vector3(xc, 0, yc);
-
-        GameObject ob = Instantiate(EntryType[2], cen + transform.TransformPoint(0, 0, 0), gameObject.transform.rotation);
+    public void Place(NLT.Node node, NLT.Node parent) 
+    {
+        // Find the center of a node in world space, instantiate a disk at said center
+        Vector3 center = GetNodeCenter(node);
+        GameObject ob = Instantiate(EntryType[2], center + transform.TransformPoint(0, 0, 0), gameObject.transform.rotation);
+        ob.transform.localScale = new Vector3(node.w - 1, 0.1f, node.h - 1);
         ob.name = node.Path;
-        ob.transform.localScale = new Vector3(node.w - 1, 1, node.h - 1);
 
-        GameObject ob1 = Instantiate(EntryType[1], s2 + transform.TransformPoint(0, 0, 0), gameObject.transform.rotation);
-        GameObject ob2 = Instantiate(EntryType[1], s3 + transform.TransformPoint(0, 0, 0), gameObject.transform.rotation);
-        GameObject ob3 = Instantiate(EntryType[1], s4 + transform.TransformPoint(0, 0, 0), gameObject.transform.rotation);
-        ob1.transform.SetParent(ob.transform);
-        ob2.transform.SetParent(ob.transform);
-        ob3.transform.SetParent(ob.transform);
+        // Draw File Ring
+        float arcLength = (360 / node.Directory.Children.Count);
+        float distance = node.Directory.Children.Count * 0.2f;
+        for (int i = 0; i < node.Directory.Children.Count; i++)
+        {
+            UnityFileSystemEntry child = node.Directory.Children[i];
 
-        if (Parent != null)
+            float degrees = i * arcLength + 90;
+            float radians = degrees * Mathf.Deg2Rad;
+            Vector3 circlePos = new Vector3(Mathf.Cos(radians) * distance, 1, Mathf.Sin(radians) * distance);
+
+            GameObject fileSphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            fileSphere.transform.position = center + circlePos;
+            fileSphere.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+
+            Renderer renderer = fileSphere.GetComponent<Renderer>();
+            renderer.material.SetColor("_Color", child.EntryType == UnityFileSystemEntry.Type.File ? Color.red : Color.blue);
+        }
+
+        // Draw line between parent and current node
+        if (parent != null) 
         {
             LineRenderer lineRenderer = ob.AddComponent<LineRenderer>();
             lineRenderer.material = new Material(Shader.Find("Sprites/Default"));
             lineRenderer.widthMultiplier = 0.2f;
             lineRenderer.positionCount = 2;
 
-            xc = (Parent.x + Parent.x + Parent.w - 1) / 2;
-            yc = (Parent.y + Parent.y + Parent.h) / 2;
-            Vector3 cen2 = new Vector3(xc, 0, yc);
-            //Vector3 spawnPosition2 = new Vector3(Parent.x, 0, Parent.y);
-
-            lineRenderer.SetPosition(0, cen);
-            lineRenderer.SetPosition(1, cen2);
+            Vector3 parentCenter = GetNodeCenter(parent);
+            lineRenderer.SetPosition(0, center);
+            lineRenderer.SetPosition(1, parentCenter);
         }
 
-        foreach (var child in node.c)
+        foreach (var child in node.c) 
         {
             Place(child, node);
         }
     }
-
 }

@@ -19,7 +19,6 @@ public class UnityFileSystemEntry
 
     public UnityFileSystemEntry(UnityFileSystemEntry parent)
     {
-        //Parent = parent;
         Master = null;
     }
 }
