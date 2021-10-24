@@ -43,6 +43,8 @@ namespace NLT
 		public List<NLT.Node> c;
 		public int cs;
 
+		public FileRing Ring;
+
 		public UnityDirectory Directory;
 		public string Path;
 		#endregion
@@ -58,6 +60,8 @@ namespace NLT
 
 			this.Directory = directory;
 			this.Path = directory.Path;
+
+			this.Ring = new FileRing(ref directory);
 		}
 
 		// --------------------------------------------------------------------------------------------------------------------
@@ -68,6 +72,11 @@ namespace NLT
 			secondWalk(this, 0);
 		}
 		// --------------------------------------------------------------------------------------------------------------------
+
+		public Vector3 GetCenter() 
+		{
+			return new Vector3((x * 2 + w - 1) * 0.5f, 0, (y * 2 + h) * 0.5f);
+		}
 
 		public void firstWalk(NLT.Node t) 
 		{
