@@ -21,6 +21,8 @@ public class Reader : MonoBehaviour
         // Calculate positions for tree nodes, place them and move camera
         treeRoot.layout();
         PlaceTree(treeRoot, null);
+
+        treeRoot.Ring.EnableActions();
         Rig.MoveCameraToWorldLocation(treeRoot.GetCenter());
     }
 

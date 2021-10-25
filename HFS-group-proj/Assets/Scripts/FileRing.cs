@@ -1,11 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
-public class FileRing : MonoBehaviour
+public class FileRing
 {
     public List<GameObject> FileObjects;
     public GameObject RingObject;
+    public InputActionAsset ActionsAsset;
 
     private UnityDirectory Directory;
     private float MaxRotation;
@@ -13,7 +15,14 @@ public class FileRing : MonoBehaviour
     public FileRing(ref UnityDirectory directory)
     {
         Directory = directory;
+
         RingObject = new GameObject();
+        RingObject.name = "Ring \"" + Directory.Name + "\"";
+        ActionsAsset = new XRIDefaultInputActions().asset;
+        InputAction inputAction = ActionsAsset.FindAction("HFS CustomActions/Rotate");
+        RotateAction rotateScript = RingObject.AddComponent<RotateAction>();
+        rotateScript.rotateReference = InputActionReference.Create(inputAction);
+
         FileObjects = new List<GameObject>();
     }
 
@@ -44,5 +53,15 @@ public class FileRing : MonoBehaviour
         }
 
         MaxRotation = centerOffset;
+    }
+
+    public void EnableActions()
+    {
+        ActionsAsset.Enable();
+    }
+
+    public void DisableActions() 
+    {
+        ActionsAsset.Disable();
     }
 }

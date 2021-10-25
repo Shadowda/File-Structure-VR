@@ -897,6 +897,52 @@
                     "isPartOfComposite": true
                 }
             ]
+        },
+        {
+            "name": "HFS CustomActions",
+            "id": "7d952159-abdc-4044-9cce-6cdc58c17804",
+            "actions": [
+                {
+                    "name": "Rotate",
+                    "type": "Value",
+                    "id": "4dd3f9c7-3584-4d5b-b17b-6a9605efb256",
+                    "expectedControlType": "Axis",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "Screenshot",
+                    "type": "Button",
+                    "id": "37512a14-f768-4712-8bd6-81f0da76ff17",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "22be025c-777c-4ba1-b4f8-ff2a6bee08b5",
+                    "path": "<OculusTouchController>/thumbstick/x",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Rotate",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "96e053a4-d069-4747-957d-5ac3040cff95",
+                    "path": "<OculusTouchController>/secondaryButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Screenshot",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": [
