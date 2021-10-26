@@ -10,12 +10,14 @@ public class FileRing
     public InputActionAsset ActionsAsset;
 
     private UnityDirectory Directory;
-    private float MaxRotation;
+    private float Radius;
 
     public FileRing(ref UnityDirectory directory)
     {
         Directory = directory;
+        Radius = directory.width;
 
+        // Dynamically add rotate action script to Ring GameObject
         RingObject = new GameObject();
         RingObject.name = "Ring \"" + Directory.Name + "\"";
         ActionsAsset = new XRIDefaultInputActions().asset;
@@ -32,7 +34,7 @@ public class FileRing
 
         float arcLength = (360 / (Directory.Children.Count + 20));
         float centerOffset = 90 - (arcLength * (Directory.Children.Count - 1) * 0.5f);
-        float distance = Directory.Children.Count * 0.2f;
+        float distance = Radius * 0.333f;
         for (int i = 0; i < Directory.Children.Count; i++) 
         {
             UnityFileSystemEntry child = Directory.Children[i];
@@ -51,8 +53,6 @@ public class FileRing
 
             FileObjects.Add(fileSphere);
         }
-
-        MaxRotation = centerOffset;
     }
 
     public void EnableActions()
