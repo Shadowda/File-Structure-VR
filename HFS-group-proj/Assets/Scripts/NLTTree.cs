@@ -47,6 +47,9 @@ namespace NLT
 		public string Path;
 		#endregion
 
+		public GameObject ob;
+		public Vector3 center;
+
 		public Node(UnityDirectory directory, List<NLT.Node> children)
 		{
 			this.w = directory.width;
@@ -62,7 +65,7 @@ namespace NLT
 
 		// --------------------------------------------------------------------------------------------------------------------
 		// Built the layout
-		public void layout() 
+		public void layout()
 		{
 			firstWalk(this);
 			secondWalk(this, 0);
@@ -92,9 +95,23 @@ namespace NLT
 			positionRoot(t);
 			setExtremes(t);
 		}
+		
+		public void secondWalk(NLT.Node t, float modsum) 
+		{
+			modsum += t.mod;
+			// Set absolute (non-relative) horizontal coordinate.  
+			t.x = t.prelim + modsum;
+			addChildSpacing(t);
+			for (var i = 0; i < t.cs; i++) {
+				secondWalk(t.c[i], modsum);
+			}
+
+			t.center = new Vector3((t.x * 2 + t.w - 1) * 0.5f, 0, (t.y * 2 + t.h) * 0.5f);
+		}
 
 		public void setExtremes(NLT.Node t) 
 		{
+			// if this has no children
 			if (t.cs == 0) 
 			{
 				t.el = t;
@@ -221,16 +238,7 @@ namespace NLT
 			t.prelim = (t.c[0].prelim + t.c[0].mod + t.c[t.cs - 1].mod + t.c[t.cs - 1].prelim + t.c[t.cs - 1].w) / 2 - t.w / 2;
 		}
 
-		public void secondWalk(NLT.Node t, float modsum) 
-		{
-			modsum += t.mod;
-			// Set absolute (non-relative) horizontal coordinate.  
-			t.x = t.prelim + modsum;
-			addChildSpacing(t);
-			for (var i = 0; i < t.cs; i++) {
-				secondWalk(t.c[i], modsum);
-			}
-		}
+		
 
 		public void distributeExtra(NLT.Node t, int i, int si, float dist) 
 		{
@@ -290,6 +298,20 @@ namespace NLT
 
 			Debug.Log(node.x);
 			Debug.Log(node.y);
+		}
+
+		public void project(NLT.Node node)
+		{
+			var angle = node.center.x / 300;
+			//var angle = (node.center.x - 90) / 180 * Math.PI;
+			var radius = node.center.z * 10;
+
+			node.center = new Vector3((float) (radius * Math.Cos(angle)), 0, (float) (radius * Math.Sin(angle)));
+
+			foreach (var child in node.c)
+			{
+				project(child);
+			}
 		}
 	}
 }

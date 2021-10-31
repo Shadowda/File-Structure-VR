@@ -38,11 +38,13 @@ public class UnityDirectory : UnityFileSystemEntry
         {
             ProcessChildren(depth + 1);
         }
-        
-        this.width = Math.Max(this.Size / 2, 2);
-        this.height = Math.Max(this.Size / 2, 2);
+      
+        this.width = (float)Math.Log(this.Size + 1) + 5;
+        this.height = (float)Math.Log(this.Size + 1) + 5;
         this.y = depth;
-        
+
+       //Debug.Log(this.Size);
+       //Debug.Log(this.height);
         if (Parent == null)
         {
             foreach (var child in this.GraphedChildren)
@@ -56,10 +58,9 @@ public class UnityDirectory : UnityFileSystemEntry
     {
         node.y = node.Parent.y + node.Parent.height + 2;
 
-        if (node.Size / 2 > 20)
+        if (node.Size > 20)
         {
-            Debug.Log(node.Path);
-            Debug.Log(node.Size);
+           // node.y += node.Size / 2;
         }
 
         foreach (var child in node.GraphedChildren)
