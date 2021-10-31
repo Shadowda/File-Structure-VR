@@ -27,6 +27,8 @@ public class Reader : MonoBehaviour
 
         //Rig.MoveCameraToWorldLocation(treeRoot.center + new Vector3 (0, 1,0));
         PlaceTree(treeRoot, null);
+
+        treeRoot.Ring.EnableActions();
         Rig.MoveCameraToWorldLocation(treeRoot.GetCenter());
     }
 
