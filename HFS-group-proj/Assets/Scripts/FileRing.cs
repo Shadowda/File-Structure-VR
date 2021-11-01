@@ -35,6 +35,8 @@ public class FileRing
         float arcLength = (360 / (Directory.Children.Count + 20));
         float centerOffset = 90 - (arcLength * (Directory.Children.Count - 1) * 0.5f);
         float distance = Radius * 0.333f;
+        int textOffset = 0;
+
         for (int i = 0; i < Directory.Children.Count; i++) 
         {
             UnityFileSystemEntry child = Directory.Children[i];
@@ -51,7 +53,25 @@ public class FileRing
             Renderer renderer = fileSphere.GetComponent<Renderer>();
             renderer.material.SetColor("_Color", child.EntryType == UnityFileSystemEntry.Type.File ? Color.red : Color.blue);
 
+            //create new object to hold text
+            GameObject txtHolder = new GameObject();
+
+            //make fileSphere parent of txtholder
+            txtHolder.transform.parent = fileSphere.transform;
+            txtHolder.name = "Text Holder";
+
+            //create text mesh
+            TextMesh textMesh = txtHolder.AddComponent<TextMesh>();
+            textMesh.text = child.Name;
+            textMesh.characterSize = (float)0.01;
+
+            //Set postion of the TextMesh with offset
+            textMesh.anchor = TextAnchor.MiddleCenter;
+            textMesh.alignment = TextAlignment.Center;
+            textMesh.transform.position = new Vector3(fileSphere.transform.position.x, fileSphere.transform.position.y + textOffset, fileSphere.transform.position.z);
+
             FileObjects.Add(fileSphere);
+
         }
     }
 
