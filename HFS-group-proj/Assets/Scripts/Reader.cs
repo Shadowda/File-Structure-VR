@@ -10,6 +10,7 @@ public class Reader : MonoBehaviour
     public XRRig Rig;
     public GameObject[] EntryType;
 
+
     // Main - called before the first frame update
     void Start()
     {
