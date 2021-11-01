@@ -39,8 +39,8 @@ public class UnityDirectory : UnityFileSystemEntry
             ProcessChildren(depth + 1);
         }
       
-        this.width = (float)Math.Log(this.Size + 1) + 5;
-        this.height = (float)Math.Log(this.Size + 1) + 5;
+        this.width = (float)Math.Log(this.Size + 1) + 10;
+        this.height = (float)Math.Log(this.Size + 1) + 10;
         this.y = depth;
 
        //Debug.Log(this.Size);
