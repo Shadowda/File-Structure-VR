@@ -978,6 +978,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1197768498}
   - component: {fileID: 1197768497}
+  - component: {fileID: 1197768499}
   m_Layer: 0
   m_Name: XR Rig
   m_TagString: Untagged
@@ -1019,6 +1020,79 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1197768499
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1197768496}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e2f4617667341945b5a7756e14b62d0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_InteractionManager: {fileID: 764723649}
+  m_Colliders: []
+  m_InteractionLayerMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CustomReticle: {fileID: 0}
+  m_FirstHoverEntered:
+    m_PersistentCalls:
+      m_Calls: []
+  m_LastHoverExited:
+    m_PersistentCalls:
+      m_Calls: []
+  m_HoverEntered:
+    m_PersistentCalls:
+      m_Calls: []
+  m_HoverExited:
+    m_PersistentCalls:
+      m_Calls: []
+  m_SelectEntered:
+    m_PersistentCalls:
+      m_Calls: []
+  m_SelectExited:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Activated:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Deactivated:
+    m_PersistentCalls:
+      m_Calls: []
+  m_OnFirstHoverEntered:
+    m_PersistentCalls:
+      m_Calls: []
+  m_OnLastHoverExited:
+    m_PersistentCalls:
+      m_Calls: []
+  m_OnHoverEntered:
+    m_PersistentCalls:
+      m_Calls: []
+  m_OnHoverExited:
+    m_PersistentCalls:
+      m_Calls: []
+  m_OnSelectEntered:
+    m_PersistentCalls:
+      m_Calls: []
+  m_OnSelectExited:
+    m_PersistentCalls:
+      m_Calls: []
+  m_OnSelectCanceled:
+    m_PersistentCalls:
+      m_Calls: []
+  m_OnActivate:
+    m_PersistentCalls:
+      m_Calls: []
+  m_OnDeactivate:
+    m_PersistentCalls:
+      m_Calls: []
+  m_TeleportationProvider: {fileID: 0}
+  m_MatchOrientation: 0
+  m_TeleportTrigger: 0
+  m_TeleportAnchorTransform: {fileID: 1197768498}
 --- !u!1 &1228446858
 GameObject:
   m_ObjectHideFlags: 0
@@ -1093,7 +1167,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44282e6ea8220fb42bb788bd71fe315a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  RootPath: C:\Users\Connor Markwell\Projects\File Structure VR\VR TEST FILE STRUCTURE
+  RootPath: C:\Users\22myn\OneDrive\Documents\GitHub\File-Structure-VR\VR TEST FILE
+    STRUCTURE
   Rig: {fileID: 1197768497}
   EntryType:
   - {fileID: 8719154703047282913, guid: ae8b34f37ec511049adfea672ac3aebd, type: 3}
