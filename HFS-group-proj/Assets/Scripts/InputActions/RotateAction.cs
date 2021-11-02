@@ -11,7 +11,7 @@ public class RotateAction : MonoBehaviour
         if (rotateReference != null) 
         {
             float value = rotateReference.action.ReadValue<float>();
-            transform.Rotate(new Vector3(0, (5.0f * Time.deltaTime) * value, 0));
+            transform.Rotate(new Vector3(0, (20.0f * Time.deltaTime) * value, 0));
         }
     }
 }

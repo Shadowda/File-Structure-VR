@@ -8,7 +8,6 @@ using UnityEngine;
  * "Drawing Non-layered Tidy Trees in Linear Time" by Atze van der Ploeg
  * 
  * C# port from Java code by Pierce Jackson
- * 
  */
 namespace NLT
 {
@@ -39,6 +38,8 @@ namespace NLT
 		public float msel;
 		public float mser;
 
+		public NLT.Node Parent;
+
 		// List of children and number of children
 		public List<NLT.Node> c;
 		public int cs;
@@ -61,7 +62,7 @@ namespace NLT
 			this.Directory = directory;
 			this.Path = directory.Path;
 
-			this.Ring = new FileRing(ref directory);
+			this.Ring = new FileRing(ref directory, this);
 		}
 
 		// --------------------------------------------------------------------------------------------------------------------
@@ -76,6 +77,11 @@ namespace NLT
 		public Vector3 GetCenter() 
 		{
 			return new Vector3((x * 2 + w - 1) * 0.5f, 0, (y * 2 + h) * 0.5f);
+		}
+
+		public void PlaceFileRing() 
+		{
+			Ring.Place(GetCenter());
 		}
 
 		public void firstWalk(NLT.Node t) 

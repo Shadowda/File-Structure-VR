@@ -26,12 +26,6 @@ public class Reader : MonoBehaviour
         Rig.MoveCameraToWorldLocation(treeRoot.GetCenter());
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
     public void PlaceTree(NLT.Node node, NLT.Node parent) 
     {
         // Find the center of a node in world space, instantiate a disk at said center
@@ -39,8 +33,6 @@ public class Reader : MonoBehaviour
         GameObject ob = Instantiate(EntryType[2], center + transform.TransformPoint(0, 0, 0), gameObject.transform.rotation);
         ob.transform.localScale = new Vector3(node.w - 1, 0.1f, node.h - 1);
         ob.name = node.Path;
-
-        node.Ring.PlaceFileRing(center);
 
         // Draw line between parent and current node
         if (parent != null) 
@@ -59,5 +51,7 @@ public class Reader : MonoBehaviour
         {
             PlaceTree(child, node);
         }
+
+        node.PlaceFileRing();
     }
 }

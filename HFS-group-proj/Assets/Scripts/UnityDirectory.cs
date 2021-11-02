@@ -39,8 +39,8 @@ public class UnityDirectory : UnityFileSystemEntry
             ProcessChildren(depth + 1);
         }
         
-        this.width = Math.Max(this.Size / 2, 2);
-        this.height = Math.Max(this.Size / 2, 2);
+        this.width = (float)Math.Log(this.Size + 1) * 3;
+        this.height = (float)Math.Log(this.Size + 1) * 3;
         this.y = depth;
         
         if (Parent == null)
@@ -144,6 +144,13 @@ public class UnityDirectory : UnityFileSystemEntry
             children.Add(convert(child));
         }
 
-        return new NLT.Node(node, children);
+        NLT.Node NLTNode = new NLT.Node(node, children);
+        foreach (var child in NLTNode.c) 
+        {
+            child.Parent = NLTNode;
+            Debug.Log(child.Parent);
+        }
+
+        return NLTNode;
     }
 }
