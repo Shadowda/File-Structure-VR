@@ -18,7 +18,7 @@ public class Reader : MonoBehaviour
         //string[] drives = Environment.GetLogicalDrives();
         //UnityDirectory root = new UnityDirectory(RootPath == "" ? drives[0] : RootPath, 0);
 
-        UnityDirectory root = new UnityDirectory("D:/Users/", 0);
+        UnityDirectory root = new UnityDirectory("D:/Users/Pierce T Jackson/Documents/Data Vis/VR/File-Structure-VR/VR TEST FILE STRUCTURE", 0);
 
         NLT.Node treeRoot = root.convertToTree();
 

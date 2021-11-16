@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class FileRing
+public class FileRing 
 {
     public List<GameObject> FileObjects;
     public GameObject RingObject;
@@ -45,13 +45,16 @@ public class FileRing
             float radians = degrees * Mathf.Deg2Rad;
             Vector3 circlePos = new Vector3(Mathf.Cos(radians) * distance, 1, Mathf.Sin(radians) * distance);
 
-            GameObject fileSphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            GameObject objPrefab = Resources.Load("File") as GameObject;
+            GameObject fileSphere = GameObject.Instantiate(objPrefab) as GameObject;
+
+             //GameObject fileSphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             fileSphere.transform.parent = RingObject.transform;
             fileSphere.transform.localPosition = circlePos;
-            fileSphere.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+            fileSphere.transform.localScale = new Vector3(1f, 1f, 1f);
 
-            Renderer renderer = fileSphere.GetComponent<Renderer>();
-            renderer.material.SetColor("_Color", child.EntryType == UnityFileSystemEntry.Type.File ? Color.red : Color.blue);
+            //Renderer renderer = fileSphere.GetComponent<Renderer>();
+            //renderer.material.SetColor("_Color", child.EntryType == UnityFileSystemEntry.Type.File ? Color.red : Color.blue);
 
             //create new object to hold text
             GameObject txtHolder = new GameObject();
@@ -63,7 +66,7 @@ public class FileRing
             //create text mesh
             TextMesh textMesh = txtHolder.AddComponent<TextMesh>();
             textMesh.text = child.Name;
-            textMesh.characterSize = (float)0.01;
+            textMesh.characterSize = (float)0.05;
 
             //Set postion of the TextMesh with offset
             textMesh.anchor = TextAnchor.MiddleCenter;

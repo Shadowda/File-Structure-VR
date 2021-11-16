@@ -39,8 +39,8 @@ public class UnityDirectory : UnityFileSystemEntry
             ProcessChildren(depth + 1);
         }
       
-        this.width = (float)Math.Log(this.Size + 1) + 10;
-        this.height = (float)Math.Log(this.Size + 1) + 10;
+        this.width = (float)Math.Log(this.Size + 1) + 5;
+        this.height = (float)Math.Log(this.Size + 1) + 5;
         this.y = depth;
 
        //Debug.Log(this.Size);
@@ -119,15 +119,6 @@ public class UnityDirectory : UnityFileSystemEntry
     public void Log<t>(t str)
     {
         Debug.Log(str);
-    }
-
-    public void updateMaster(UnityDirectory node)
-    {
-        foreach (var child in node.GraphedChildren)
-        {
-            child.Master = Master;
-            updateMaster(child);
-        }
     }
 
     public NLT.Node convertToTree() 
