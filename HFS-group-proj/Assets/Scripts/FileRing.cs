@@ -45,8 +45,27 @@ public class FileRing
             float radians = degrees * Mathf.Deg2Rad;
             Vector3 circlePos = new Vector3(Mathf.Cos(radians) * distance, 1, Mathf.Sin(radians) * distance);
 
-            GameObject objPrefab = Resources.Load("File") as GameObject;
+            GameObject objPrefab;
+            if (child.EntryType == UnityFileSystemEntry.Type.File)
+            {
+                objPrefab = Resources.Load("File") as GameObject;
+                
+            }
+            else
+            {
+                if (((UnityDirectory)Directory.Children[i]).Children.Count > 0)
+                {
+                    objPrefab = Resources.Load("folder1") as GameObject;
+                }
+                else
+                {
+                    objPrefab = Resources.Load("folder2") as GameObject;
+                }
+
+            }
             GameObject fileSphere = GameObject.Instantiate(objPrefab) as GameObject;
+
+            
 
              //GameObject fileSphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             fileSphere.transform.parent = RingObject.transform;
