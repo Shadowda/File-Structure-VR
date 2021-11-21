@@ -81,7 +81,10 @@ public class FileRing
         {
             renderer.material.SetColor("_Color", Color.blue);
             DirectoryInteractable dirInteractable = fileSphere.AddComponent<DirectoryInteractable>();
-            dirInteractable.Position = node.GetCenter();
+
+            dirInteractable.TargetPosition = node.GetCenter();
+            dirInteractable.TargetPlatform = GameObject.Find(entry.Path);
+
             dirInteractable.RingToEnable = node.Ring;
             dirInteractable.RingToDisable = this;
         }

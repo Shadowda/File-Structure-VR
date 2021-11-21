@@ -148,7 +148,6 @@ public class UnityDirectory : UnityFileSystemEntry
         foreach (var child in NLTNode.c) 
         {
             child.Parent = NLTNode;
-            Debug.Log(child.Parent);
         }
 
         return NLTNode;
