@@ -28,7 +28,7 @@ public class DirectoryInteractable : XRSimpleInteractable
         base.OnHoverEntered(args);
 
         Renderer renderer = TargetPlatform.GetComponent<Renderer>();
-        renderer.material.SetColor("_Color", Color.red);
+        renderer.material.SetColor("_Color", Color.blue);
     }
 
     // When an interactable directory node is unhovered, unhighlight the target platform
