@@ -50,6 +50,9 @@ public class Reader : MonoBehaviour
         node.Ring.PlaceFileRing(node.center);
         node.Ring.RingObject.transform.SetParent(node.ob.transform);
 
+        var ob2 = Instantiate(EntryType[2], node.center + transform.TransformPoint(0, 50, 0), gameObject.transform.rotation);
+        ob2.transform.localScale = new Vector3(node.w - 1, 0.1f, node.h - 1);
+
         // Draw line between current node and parent
         if (parent != null) 
         {
@@ -62,6 +65,9 @@ public class Reader : MonoBehaviour
 
             lineRenderer.SetPosition(0, node.center);
             lineRenderer.SetPosition(1, parent.center);
+
+            lineRenderer.SetPosition(0, (node.center + new Vector3(0, 50,1)));
+            lineRenderer.SetPosition(1, (parent.center + new Vector3(0, 50, 1)));
 
         }
 
