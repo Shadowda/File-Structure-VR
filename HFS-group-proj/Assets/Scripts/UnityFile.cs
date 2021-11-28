@@ -5,19 +5,18 @@ using UnityEngine;
 
 public class UnityFile : UnityFileSystemEntry
 {
-
-    public System.IO.FileInfo Info { get; set; }
-    public UnityDirectory Parent { get; set; }
-
     public UnityFile(string path, UnityDirectory parent) : base(parent)
     {
-        Parent = parent;
-        Info = new System.IO.FileInfo(path);
-        EntryType = UnityFileSystemEntry.Type.File;
+        System.IO.FileInfo Info = new System.IO.FileInfo(path);
+
         Path = path;
         Name = Info.Name;
         Length = Info.Length;
-        LastModified = Info.LastWriteTime;
+        CreationTime = Info.CreationTime;
+        LastWriteTime = Info.LastWriteTime;
+
+        EntryType = Type.File;
+        Parent = parent;
         Position = new Vector3(0f, 0f, 0f);
     }
 }

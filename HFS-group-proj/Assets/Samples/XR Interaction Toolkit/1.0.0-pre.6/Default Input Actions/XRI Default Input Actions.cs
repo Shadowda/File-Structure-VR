@@ -952,6 +952,22 @@ public class @XRIDefaultInputActions : IInputActionCollection, IDisposable
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""SortNext"",
+                    ""type"": ""Button"",
+                    ""id"": ""2ee8fdc5-9a21-44e8-8cf4-fff3208f53cd"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""SortLast"",
+                    ""type"": ""Button"",
+                    ""id"": ""b52e8060-5081-447b-aa47-dc5801249e46"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -969,11 +985,55 @@ public class @XRIDefaultInputActions : IInputActionCollection, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""96e053a4-d069-4747-957d-5ac3040cff95"",
-                    ""path"": ""<OculusTouchController>/secondaryButton"",
+                    ""path"": ""<OculusTouchController>/thumbstickClicked"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Screenshot"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""abaebf9f-8cb2-4939-ace5-a44351f0c709"",
+                    ""path"": ""<XRController>{LeftHand}/primaryButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Generic XR Controller"",
+                    ""action"": ""SortNext"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e75dc0b4-1088-4702-a813-d50e28a6d3b0"",
+                    ""path"": ""<XRController>{RightHand}/primaryButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Generic XR Controller"",
+                    ""action"": ""SortNext"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""ad432eeb-b6c8-4853-a821-dbde02d80667"",
+                    ""path"": ""<XRController>{LeftHand}/secondaryButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Generic XR Controller"",
+                    ""action"": ""SortLast"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""c93770b5-e46a-4dfd-ad3f-68928170e425"",
+                    ""path"": ""<XRController>{RightHand}/secondaryButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SortLast"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -1079,6 +1139,8 @@ public class @XRIDefaultInputActions : IInputActionCollection, IDisposable
         m_HFSCustomActions = asset.FindActionMap("HFS CustomActions", throwIfNotFound: true);
         m_HFSCustomActions_Rotate = m_HFSCustomActions.FindAction("Rotate", throwIfNotFound: true);
         m_HFSCustomActions_Screenshot = m_HFSCustomActions.FindAction("Screenshot", throwIfNotFound: true);
+        m_HFSCustomActions_SortNext = m_HFSCustomActions.FindAction("SortNext", throwIfNotFound: true);
+        m_HFSCustomActions_SortLast = m_HFSCustomActions.FindAction("SortLast", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -1429,12 +1491,16 @@ public class @XRIDefaultInputActions : IInputActionCollection, IDisposable
     private IHFSCustomActionsActions m_HFSCustomActionsActionsCallbackInterface;
     private readonly InputAction m_HFSCustomActions_Rotate;
     private readonly InputAction m_HFSCustomActions_Screenshot;
+    private readonly InputAction m_HFSCustomActions_SortNext;
+    private readonly InputAction m_HFSCustomActions_SortLast;
     public struct HFSCustomActionsActions
     {
         private @XRIDefaultInputActions m_Wrapper;
         public HFSCustomActionsActions(@XRIDefaultInputActions wrapper) { m_Wrapper = wrapper; }
         public InputAction @Rotate => m_Wrapper.m_HFSCustomActions_Rotate;
         public InputAction @Screenshot => m_Wrapper.m_HFSCustomActions_Screenshot;
+        public InputAction @SortNext => m_Wrapper.m_HFSCustomActions_SortNext;
+        public InputAction @SortLast => m_Wrapper.m_HFSCustomActions_SortLast;
         public InputActionMap Get() { return m_Wrapper.m_HFSCustomActions; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -1450,6 +1516,12 @@ public class @XRIDefaultInputActions : IInputActionCollection, IDisposable
                 @Screenshot.started -= m_Wrapper.m_HFSCustomActionsActionsCallbackInterface.OnScreenshot;
                 @Screenshot.performed -= m_Wrapper.m_HFSCustomActionsActionsCallbackInterface.OnScreenshot;
                 @Screenshot.canceled -= m_Wrapper.m_HFSCustomActionsActionsCallbackInterface.OnScreenshot;
+                @SortNext.started -= m_Wrapper.m_HFSCustomActionsActionsCallbackInterface.OnSortNext;
+                @SortNext.performed -= m_Wrapper.m_HFSCustomActionsActionsCallbackInterface.OnSortNext;
+                @SortNext.canceled -= m_Wrapper.m_HFSCustomActionsActionsCallbackInterface.OnSortNext;
+                @SortLast.started -= m_Wrapper.m_HFSCustomActionsActionsCallbackInterface.OnSortLast;
+                @SortLast.performed -= m_Wrapper.m_HFSCustomActionsActionsCallbackInterface.OnSortLast;
+                @SortLast.canceled -= m_Wrapper.m_HFSCustomActionsActionsCallbackInterface.OnSortLast;
             }
             m_Wrapper.m_HFSCustomActionsActionsCallbackInterface = instance;
             if (instance != null)
@@ -1460,6 +1532,12 @@ public class @XRIDefaultInputActions : IInputActionCollection, IDisposable
                 @Screenshot.started += instance.OnScreenshot;
                 @Screenshot.performed += instance.OnScreenshot;
                 @Screenshot.canceled += instance.OnScreenshot;
+                @SortNext.started += instance.OnSortNext;
+                @SortNext.performed += instance.OnSortNext;
+                @SortNext.canceled += instance.OnSortNext;
+                @SortLast.started += instance.OnSortLast;
+                @SortLast.performed += instance.OnSortLast;
+                @SortLast.canceled += instance.OnSortLast;
             }
         }
     }
@@ -1532,5 +1610,7 @@ public class @XRIDefaultInputActions : IInputActionCollection, IDisposable
     {
         void OnRotate(InputAction.CallbackContext context);
         void OnScreenshot(InputAction.CallbackContext context);
+        void OnSortNext(InputAction.CallbackContext context);
+        void OnSortLast(InputAction.CallbackContext context);
     }
 }

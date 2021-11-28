@@ -4,9 +4,18 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.XR.Interaction.Toolkit;
 
+public enum SortBy
+{
+    ReadOrder,
+    Name,
+    CreationTime,
+    LastModifiedTime
+}
+
 public class FileRing
 {
-    public List<GameObject> FileObjects;
+    public static SortBy[] SortByArray = { SortBy.ReadOrder, SortBy.Name, SortBy.CreationTime, SortBy.LastModifiedTime };
+
     public GameObject BackObject;
     public GameObject RingObject;
     public InputActionAsset ActionsAsset;
@@ -14,25 +23,40 @@ public class FileRing
     private UnityDirectory Directory;
     private NLT.Node Node;
     private float Radius;
+    private int SortIndex;
+
+    private float ArcLength;
+    private float CenterOffset;
+    private float Distance;
 
     public FileRing(ref UnityDirectory directory, NLT.Node node)
     {
         Directory = directory;
         Node = node;
         Radius = directory.width;
+        SortIndex = 0;
 
-        // Dynamically add rotate action script to Ring GameObject
         RingObject = new GameObject();
         RingObject.name = "Ring \"" + Directory.Name + "\"";
+
         ActionsAsset = new XRIDefaultInputActions().asset;
+
+        // Dynamically add rotate action script to Ring GameObject
         InputAction inputAction = ActionsAsset.FindAction("HFS CustomActions/Rotate");
         RotateAction rotateScript = RingObject.AddComponent<RotateAction>();
         rotateScript.rotateReference = InputActionReference.Create(inputAction);
 
-        FileObjects = new List<GameObject>();
+        // Dynamically add sort action script to Ring GameObject. Super extra, but okay for now.
+        InputAction sortNextAction = ActionsAsset.FindAction("HFS CustomActions/SortNext");
+        InputAction sortLastAction = ActionsAsset.FindAction("HFS CustomActions/SortLast");
+        SortAction sortActionScript = RingObject.AddComponent<SortAction>();
+        sortActionScript.sortNextReference = InputActionReference.Create(sortNextAction);
+        sortActionScript.sortLastReference = InputActionReference.Create(sortLastAction);
+        sortActionScript.OnInputActionReferenceAssigned();
+        sortActionScript.fileRing = this;
     }
 
-    public void PlaceFSEntryObject(UnityFileSystemEntry entry, NLT.Node node, Vector3 position, bool addToFileObjectList = true) 
+    public void PlaceFSEntryObject(UnityFileSystemEntry entry, NLT.Node node, Vector3 position, bool fileRingObject = true) 
     {
         // Divine the correct resource type
         GameObject fsEntryObject;
@@ -82,11 +106,10 @@ public class FileRing
             fsEntryObject.transform.position.z
         );
 
-        if (addToFileObjectList) 
+        if (fileRingObject) 
         {
             fsEntryObject.transform.parent = RingObject.transform;
             fsEntryObject.transform.localPosition = position;
-            FileObjects.Add(fsEntryObject);
         }
         else 
         {
@@ -96,36 +119,66 @@ public class FileRing
         }
     }
 
+    private void PlaceFSEntryObjects()
+    {
+        // Sort file system entries based on the selected sorting type
+        List<UnityFileSystemEntry> fsEntries = new List<UnityFileSystemEntry>(Directory.Children);
+        fsEntries.Sort(delegate (UnityFileSystemEntry x, UnityFileSystemEntry y) {
+            switch (SortByArray[SortIndex]) {
+                case SortBy.Name:
+                    return x.Name.CompareTo(y.Name);
+                case SortBy.CreationTime:
+                    return x.CreationTime.CompareTo(y.CreationTime);
+                case SortBy.LastModifiedTime:
+                    return x.LastWriteTime.CompareTo(y.LastWriteTime);
+                default:
+                    return 0;
+            }
+        });
+
+        // Iterate through UnityDirectory children to render directory and file spheres
+        for (int i = 0; i < fsEntries.Count; i++) {
+            UnityFileSystemEntry child = fsEntries[i];
+            NLT.Node childNode = Node.c.Find(node => node.Path == child.Path);
+
+            float degrees = -(i * ArcLength) + CenterOffset;
+            float radians = degrees * Mathf.Deg2Rad;
+            Vector3 circlePos = new Vector3(Mathf.Cos(radians) * Distance, 1, Mathf.Sin(radians) * Distance);
+
+            PlaceFSEntryObject(child, childNode, circlePos);
+        }
+    }
+
     public void Place(Vector3 position)
     {
         RingObject.transform.position = position;
 
         // Constants for sphere ring sphere placement about a circle
-        float arcLength = (360 / (Directory.Children.Count + 20));
-        float centerOffset = 90 - (arcLength * (Directory.Children.Count - 1) * 0.5f);
-        float distance = Radius * 0.333f;
+        ArcLength = (360 / (Directory.Children.Count + 20));
+        CenterOffset = (ArcLength * (Directory.Children.Count - 1) * 0.5f) + 90;
+        Distance = Radius * 0.333f;
 
         // Place a sphere for the "back" button
         if (Node.Parent != null) 
         {
             Vector3 backPos = Node.GetCenter();
             backPos.y += 0.5f;
-            backPos.z -= distance;
+            backPos.z -= Distance;
             PlaceFSEntryObject(Node.Parent.Directory, Node.Parent, backPos, false);
         }
 
-        // Iterate through UnityDirectory children to render directory and file spheres
-        for (int i = 0; i < Directory.Children.Count; i++) 
+        PlaceFSEntryObjects();
+    }
+
+    // Select the next or previous filering sorting method
+    public void SelectNextSort(float direction)
+    {
+        SortIndex = (int)Mathf.Repeat(SortIndex + direction, SortByArray.Length);
+        foreach (Transform child in RingObject.transform) 
         {
-            UnityFileSystemEntry child = Directory.Children[i];
-            NLT.Node childNode = Node.c.Find(node => node.Path == child.Path);
-
-            float degrees = (i * arcLength) + centerOffset;
-            float radians = degrees * Mathf.Deg2Rad;
-            Vector3 circlePos = new Vector3(Mathf.Cos(radians) * distance, 1, Mathf.Sin(radians) * distance);
-
-            PlaceFSEntryObject(child, childNode, circlePos);
+            GameObject.Destroy(child.gameObject);
         }
+        PlaceFSEntryObjects();
     }
 
     // Enable the ability to spin this ring with the thumbstick

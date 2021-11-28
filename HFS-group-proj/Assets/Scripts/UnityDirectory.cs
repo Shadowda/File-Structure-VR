@@ -8,27 +8,26 @@ public class UnityDirectory : UnityFileSystemEntry
 
     public static int PROCESS_DEPTH_MAX = 6;
 
-    public UnityDirectory Parent { get; set; }
-
-    public System.IO.DirectoryInfo Info { get; set; }
     public List<UnityFileSystemEntry> Children { get; set; }
 
     public int Size { get; set; }
-
     public float width { get; set; }
     public float height { get; set; }
-    public float y;
+    public float y { get; set; }
 
     public List<UnityDirectory> GraphedChildren { get; set; }
 
     public UnityDirectory(string path, int depth = 0, UnityDirectory parent = null) : base(parent)
     {
-        this.Parent = parent;
-        this.Info = new System.IO.DirectoryInfo(path);
-        this.EntryType = Type.Directory;
+        System.IO.DirectoryInfo Info = new System.IO.DirectoryInfo(path);
+
         this.Path = path;
         this.Name = Info.Name;
-        this.LastModified = Info.LastWriteTime;
+        this.CreationTime = Info.CreationTime;
+        this.LastWriteTime = Info.LastWriteTime;
+
+        this.EntryType = Type.Directory;
+        this.Parent = parent;
         this.Position = new Vector3(0f, 0f, 0f);
         this.Children = new List<UnityFileSystemEntry>();
         this.GraphedChildren = new List<UnityDirectory>();
