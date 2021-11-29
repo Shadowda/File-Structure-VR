@@ -1417,7 +1417,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44282e6ea8220fb42bb788bd71fe315a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  RootPath: C:\Users\Connor Markwell\Projects\File Structure VR\VR TEST FILE STRUCTURE
+  RootPath: C:\Users\Connor Markwell\Projects\File Structure VR\
   Rig: {fileID: 1254177486}
   EntryType:
   - {fileID: 6459292468881271771, guid: 940c3accb62ad4c4d8ecc8ce54be2168, type: 3}
@@ -1543,6 +1543,7 @@ GameObject:
   - component: {fileID: 2126554659}
   - component: {fileID: 2126554658}
   - component: {fileID: 2126554657}
+  - component: {fileID: 2126554661}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -1614,7 +1615,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_BackGroundColor: {r: 0.49803925, g: 0.49803925, b: 0.49803925, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -1661,3 +1662,12 @@ Transform:
   m_Father: {fileID: 1412331228}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!45 &2126554661
+Skybox:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2126554656}
+  m_Enabled: 1
+  m_CustomSkybox: {fileID: 2100000, guid: e11f5b66aad75483b8cd16ee18a0c917, type: 2}

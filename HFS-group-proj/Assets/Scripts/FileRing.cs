@@ -95,7 +95,7 @@ public class FileRing
         // Create text mesh
         TextMesh textMesh = txtHolder.AddComponent<TextMesh>();
         textMesh.text = entry.Name;
-        textMesh.characterSize = (float)0.01;
+        textMesh.characterSize = (float)0.05;
 
         // Set postion of the TextMesh with offset
         textMesh.anchor = TextAnchor.MiddleCenter;

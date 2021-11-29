@@ -37,12 +37,13 @@ public class Reader : MonoBehaviour
         // Draw line between parent and current node
         if (parent != null) 
         {
+            Vector3 parentCenter = parent.GetCenter();
+
             LineRenderer lineRenderer = ob.AddComponent<LineRenderer>();
             lineRenderer.material = new Material(Shader.Find("Sprites/Default"));
             lineRenderer.widthMultiplier = 0.2f;
             lineRenderer.positionCount = 2;
 
-            Vector3 parentCenter = parent.GetCenter();
             lineRenderer.SetPosition(0, center);
             lineRenderer.SetPosition(1, parentCenter);
         }
