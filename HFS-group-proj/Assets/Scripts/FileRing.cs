@@ -143,7 +143,7 @@ public class FileRing
 
             float degrees = -(i * ArcLength) + CenterOffset;
             float radians = degrees * Mathf.Deg2Rad;
-            Vector3 circlePos = new Vector3(Mathf.Cos(radians) * Distance, 1, Mathf.Sin(radians) * Distance);
+            Vector3 circlePos = new Vector3(Mathf.Cos(radians) * Distance, 1.05f, Mathf.Sin(radians) * Distance);
 
             PlaceFSEntryObject(child, childNode, circlePos);
         }
