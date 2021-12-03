@@ -335,6 +335,17 @@
                 },
                 {
                     "name": "",
+                    "id": "32704638-42db-4790-b876-8797accdba82",
+                    "path": "<OculusTouchController>/triggerPressed",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Generic XR Controller",
+                    "action": "Activate",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "99cb7ad1-51ec-4611-af68-92a85f2c17d6",
                     "path": "<XRController>{LeftHand}/Primary2DAxis",
                     "interactions": "Sector(directions=12,sweepBehavior=1),Sector(directions=2,sweepBehavior=2)",
@@ -592,6 +603,17 @@
                     "name": "",
                     "id": "fa59aed1-ae0b-4074-a58c-294b85f46228",
                     "path": "<XRController>{RightHand}/triggerPressed",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Generic XR Controller",
+                    "action": "Activate",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "467def29-f7e1-492c-a8d2-50f016edf0a9",
+                    "path": "<OculusTouchController>/triggerPressed",
                     "interactions": "",
                     "processors": "",
                     "groups": "Generic XR Controller",
@@ -895,6 +917,112 @@
                     "action": "Translate Anchor",
                     "isComposite": false,
                     "isPartOfComposite": true
+                }
+            ]
+        },
+        {
+            "name": "HFS CustomActions",
+            "id": "7d952159-abdc-4044-9cce-6cdc58c17804",
+            "actions": [
+                {
+                    "name": "Rotate",
+                    "type": "Value",
+                    "id": "4dd3f9c7-3584-4d5b-b17b-6a9605efb256",
+                    "expectedControlType": "Axis",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "Screenshot",
+                    "type": "Button",
+                    "id": "37512a14-f768-4712-8bd6-81f0da76ff17",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "SortNext",
+                    "type": "Button",
+                    "id": "2ee8fdc5-9a21-44e8-8cf4-fff3208f53cd",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "SortLast",
+                    "type": "Button",
+                    "id": "b52e8060-5081-447b-aa47-dc5801249e46",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "22be025c-777c-4ba1-b4f8-ff2a6bee08b5",
+                    "path": "<OculusTouchController>/thumbstick/x",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Rotate",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "96e053a4-d069-4747-957d-5ac3040cff95",
+                    "path": "<OculusTouchController>/thumbstickClicked",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Screenshot",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "abaebf9f-8cb2-4939-ace5-a44351f0c709",
+                    "path": "<XRController>{LeftHand}/primaryButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Generic XR Controller",
+                    "action": "SortNext",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "e75dc0b4-1088-4702-a813-d50e28a6d3b0",
+                    "path": "<XRController>{RightHand}/primaryButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Generic XR Controller",
+                    "action": "SortNext",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "ad432eeb-b6c8-4853-a821-dbde02d80667",
+                    "path": "<XRController>{LeftHand}/secondaryButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Generic XR Controller",
+                    "action": "SortLast",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "c93770b5-e46a-4dfd-ad3f-68928170e425",
+                    "path": "<XRController>{RightHand}/secondaryButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "SortLast",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         }

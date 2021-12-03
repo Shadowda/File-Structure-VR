@@ -2,83 +2,75 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using NLT;
+using UnityEngine.XR.Interaction.Toolkit;
 
 public class Reader : MonoBehaviour
 {
+    public string RootPath;
+    public XRRig Rig;
     public GameObject[] EntryType;
 
     // Main - called before the first frame update
     void Start()
     {
-
         // Obtain names of all logical drives on the computer, set root to first drive.
         string[] drives = Environment.GetLogicalDrives();
+        UnityDirectory root = new UnityDirectory(RootPath == "" ? drives[0] : RootPath, 0);
+        NLT.Node treeRoot = root.convertToTree();
 
-        //UnityDirectory root = new UnityDirectory(drives[0], 0);
+        // Calculate positions for tree nodes, place them and move camera
+        treeRoot.layout();
+        PlaceTree(treeRoot, null);
 
-        UnityDirectory root = new UnityDirectory("D:/Users/", 0);
-
-        NLT_Tree.Tree treeRoot = root.convert(root);
-
-        treeRoot.layout(treeRoot);
-        //root.LogPrint(root);
-
-        Place(treeRoot, null);
+        treeRoot.Ring.EnableActions();
+        Rig.MoveCameraToWorldLocation(treeRoot.GetCenter());
     }
 
-    // Update is called once per frame
-    void Update()
+    public void PlaceTree(NLT.Node node, NLT.Node parent) 
     {
+        // Find the center of a node in world space, create constant
+        Vector3 center = node.GetCenter();
+        Vector3 constellationOffset = new Vector3(0, 25, 0);
 
-    }
-
-    public void Place(NLT_Tree.Tree node, NLT_Tree.Tree Parent)
-    {
-        //Vector3 spawnPosition = new Vector3(node.x * 2, 0, node.y * 20);
-        //GameObject ob = Instantiate(EntryType[2], spawnPosition + transform.TransformPoint(0, 0, 0), gameObject.transform.rotation);
-
-        Vector3 s1 = new Vector3(node.x, 0, node.y);
-        Vector3 s2 = new Vector3(node.x + node.w - 1, 0, node.y);
-        Vector3 s3 = new Vector3(node.x, 0, node.y + node.h);
-        Vector3 s4 = new Vector3(node.x + node.w - 1, 0, node.y + node.h);
-
-        float xc = (node.x + node.x + node.w - 1) / 2;
-        float yc = (node.y + node.y + node.h) / 2;
-
-        Vector3 cen = new Vector3(xc, 0, yc);
-
-        GameObject ob = Instantiate(EntryType[2], cen + transform.TransformPoint(0, 0, 0), gameObject.transform.rotation);
+        // Create primary platform where interactables will be rendered
+        GameObject ob = Instantiate(EntryType[2], center + transform.TransformPoint(0, 0, 0), gameObject.transform.rotation);
+        ob.transform.localScale = new Vector3(node.w - 1, 0.1f, node.h - 1);
         ob.name = node.Path;
-        ob.transform.localScale = new Vector3(node.w - 1, 1, node.h - 1);
 
-        GameObject ob1 = Instantiate(EntryType[1], s2 + transform.TransformPoint(0, 0, 0), gameObject.transform.rotation);
-        GameObject ob2 = Instantiate(EntryType[1], s3 + transform.TransformPoint(0, 0, 0), gameObject.transform.rotation);
-        GameObject ob3 = Instantiate(EntryType[1], s4 + transform.TransformPoint(0, 0, 0), gameObject.transform.rotation);
-        ob1.transform.SetParent(ob.transform);
-        ob2.transform.SetParent(ob.transform);
-        ob3.transform.SetParent(ob.transform);
+        // Create second platform for the constellation
+        GameObject ob2 = Instantiate(EntryType[2], center + transform.TransformPoint(constellationOffset), gameObject.transform.rotation);
+        ob2.transform.localScale = new Vector3(node.w - 1, 0.1f, node.h - 1);
 
-        if (Parent != null)
+
+        // Draw line between parent and current node
+        if (parent != null) 
         {
+            Vector3 parentCenter = parent.GetCenter();
+
+            // Draw parentage lines between primary platforms
             LineRenderer lineRenderer = ob.AddComponent<LineRenderer>();
             lineRenderer.material = new Material(Shader.Find("Sprites/Default"));
             lineRenderer.widthMultiplier = 0.2f;
             lineRenderer.positionCount = 2;
 
-            xc = (Parent.x + Parent.x + Parent.w - 1) / 2;
-            yc = (Parent.y + Parent.y + Parent.h) / 2;
-            Vector3 cen2 = new Vector3(xc, 0, yc);
-            //Vector3 spawnPosition2 = new Vector3(Parent.x, 0, Parent.y);
+            lineRenderer.SetPosition(0, center);
+            lineRenderer.SetPosition(1, parentCenter);
 
-            lineRenderer.SetPosition(0, cen);
-            lineRenderer.SetPosition(1, cen2);
+            // Draw parentage lines between constellation platforms
+            LineRenderer lineRenderer2 = ob2.AddComponent<LineRenderer>();
+            lineRenderer2.material = new Material(Shader.Find("Sprites/Default"));
+            lineRenderer2.widthMultiplier = 0.2f;
+            lineRenderer2.positionCount = 2;
+
+            lineRenderer2.SetPosition(0, center + constellationOffset);
+            lineRenderer2.SetPosition(1, parentCenter + constellationOffset);
         }
 
-        foreach (var child in node.c)
+        foreach (var child in node.c) 
         {
-            Place(child, node);
+            PlaceTree(child, node);
         }
-    }
 
+        node.PlaceFileRing();
+    }
 }
