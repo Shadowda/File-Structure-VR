@@ -1417,7 +1417,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44282e6ea8220fb42bb788bd71fe315a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  RootPath: C:\Users\Connor Markwell\Projects\File Structure VR\VR TEST FILE STRUCTURE
+  RootPath: ..\VR TEST FILE STRUCTURE
   Rig: {fileID: 1254177486}
   EntryType:
   - {fileID: 6459292468881271771, guid: 940c3accb62ad4c4d8ecc8ce54be2168, type: 3}
@@ -1527,7 +1527,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6598815579406187037, guid: 9f5a24a380916d14db9775daab4fe333, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9f5a24a380916d14db9775daab4fe333, type: 3}
