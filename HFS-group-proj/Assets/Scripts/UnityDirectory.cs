@@ -3,11 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class UnityDirectory : UnityFileSystemEntry
 {
-
-    public static int PROCESS_DEPTH_MAX = 6;
-
     public List<UnityFileSystemEntry> Children { get; set; }
 
     public int Size { get; set; }
@@ -33,7 +31,7 @@ public class UnityDirectory : UnityFileSystemEntry
         this.GraphedChildren = new List<UnityDirectory>();
 
         // Populate directory children if we aren't at max depth
-        if (depth < PROCESS_DEPTH_MAX)
+        if (depth < Reader.readDepth)
         {
             ProcessChildren(depth + 1);
         }
@@ -69,7 +67,7 @@ public class UnityDirectory : UnityFileSystemEntry
 
     private void ProcessChildren(int depth) 
     {
-        if (depth > PROCESS_DEPTH_MAX) { return; }
+        if (depth > Reader.readDepth) { return; }
 
         string[] directories, files;
 

@@ -7,12 +7,17 @@ using UnityEngine.XR.Interaction.Toolkit;
 public class Reader : MonoBehaviour
 {
     public string RootPath;
+    public int ReadDepth = 6;
+    public static int readDepth;
     public XRRig Rig;
+    public Boolean PresentationMode = false;
     public GameObject[] EntryType;
 
     // Main - called before the first frame update
     void Start()
     {
+        Reader.readDepth = ReadDepth;
+
         // Obtain names of all logical drives on the computer, set root to first drive.
         string[] drives = Environment.GetLogicalDrives();
         UnityDirectory root = new UnityDirectory(RootPath == "" ? drives[0] : RootPath, 0);
@@ -23,7 +28,10 @@ public class Reader : MonoBehaviour
         PlaceTree(treeRoot, null);
 
         treeRoot.Ring.EnableActions();
-        Rig.MoveCameraToWorldLocation(treeRoot.GetCenter());
+        Rig.MoveCameraToWorldLocation(PresentationMode 
+            ? new Vector3(-5, 5, 0)
+            : treeRoot.GetCenter()
+        );
     }
 
     public void PlaceTree(NLT.Node node, NLT.Node parent) 
